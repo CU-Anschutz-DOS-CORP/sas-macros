@@ -1,0 +1,20 @@
+var NAVTREEINDEX0 =
+{
+"createtable_8sas.html":[0,0],
+"createtable_8sas_source.html":[0,0],
+"files.html":[0],
+"getnhanesdata_8sas.html":[0,1],
+"getnhanesdata_8sas_source.html":[0,1],
+"imptallxpt_8sas.html":[0,2],
+"imptallxpt_8sas_source.html":[0,2],
+"index.html":[],
+"missing_8sas.html":[0,3],
+"missing_8sas_source.html":[0,3],
+"nhanesfmtscrape_8sas.html":[0,4],
+"nhanesfmtscrape_8sas_source.html":[0,4],
+"outsummarize_8sas.html":[0,5],
+"outsummarize_8sas_source.html":[0,5],
+"pages.html":[],
+"summarize_8sas.html":[0,6],
+"summarize_8sas_source.html":[0,6]
+};
