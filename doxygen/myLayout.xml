@@ -3,7 +3,6 @@
   <!-- Navigation index tabs for HTML output -->
   <navindex>
     <tab type="mainpage" visible="yes" title="Home"/>
-    <tab type="pages" visible="yes" title="" intro=""/>
     <tab type="modules" visible="yes" title="" intro=""/>
     <tab type="namespaces" visible="yes" title="">
       <tab type="namespacelist" visible="yes" title="" intro=""/>
@@ -32,10 +31,11 @@
       <tab type="exceptionhierarchy" visible="yes" title="" intro=""/>
     </tab>
     <!-- <tab type="files" visible="yes" title="Macros"> -->
-    <tab type="filelist" visible="yes" title="Macros" intro="Listing of available macros">
+    <tab type="filelist" visible="yes" title="DOS-CORP Macros" intro="Listing of available macros">
       <tab type="globals" visible="yes" title="" intro=""/>
     </tab> 
     <tab type="examples" visible="yes" title="" intro=""/>
+    <tab type="pages" visible="yes" title="Other Resources" intro="Other macro resources"/>
   </navindex>
 
   <!-- Layout definition for a class page -->
