@@ -59,8 +59,8 @@ html {
 --memdef-template-color: #4665A2;
 
 /* tables */
---table-cell-border-color: #2D4068;
---table-header-background-color: #374F7F;
+--table-cell-border-color: #434343;
+--table-header-background-color: #BCBCBC;
 --table-header-foreground-color: #FFFFFF;
 
 /* labels */
@@ -1972,4 +1972,4 @@ tt, code, kbd, samp
 u {
 	text-decoration: underline;
 }
-
+  

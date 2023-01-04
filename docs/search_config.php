@@ -1,7 +1,7 @@
 <?php
 
 $config = array(
-  'PROJECT_NAME' => "SAS Macro Library",
+  'PROJECT_NAME' => "SAS Macro Repository",
   'GENERATE_TREEVIEW' => true,
   'DISABLE_INDEX' => false,
 );
@@ -16,7 +16,7 @@ $translator = array(
   'search_matches' => "Matches:",
   'search' => "Search",
   'split_bar' => "<div id=\"side-nav\" class=\"ui-resizable side-nav-resizable\">\n  <div id=\"nav-tree\">\n    <div id=\"nav-tree-contents\">\n      <div id=\"nav-sync\" class=\"sync\"></div>\n    </div>\n  </div>\n  <div id=\"splitbar\" style=\"-moz-user-select:none;\" \n       class=\"ui-resizable-handle\">\n  </div>\n</div>\n<script type=\"text/javascript\">\n/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */\n$(document).ready(function(){initNavTree('search.html',''); initResizable(); });\n/* @license-end */\n</script>\n<div id=\"doc-content\">\n",
-  'logo' => "Generated on Wed Dec 14 2022 12:08:11 for SAS Macro Library by&#160;\n<a href=\"https://www.doxygen.org/index.html\">\n<img class=\"footer\" src=\"doxygen.svg\" width=\"104\" height=\"31\" alt=\"doxygen\"/></a> 1.9.5 ",
+  'logo' => "Generated on Wed Jan 4 2023 15:19:28 for SAS Macro Repository by&#160;\n<a href=\"https://www.doxygen.org/index.html\">\n<img class=\"footer\" src=\"doxygen.svg\" width=\"104\" height=\"31\" alt=\"doxygen\"/></a> 1.9.5 ",
 );
 
 ?>

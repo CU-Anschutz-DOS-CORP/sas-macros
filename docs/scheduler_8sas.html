@@ -7,7 +7,7 @@
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="shortcut icon" href="icon.png" type="image/x-icon" />
-<title>SAS Macro Repository: nhanesfmtscrape.sas File Reference</title>
+<title>SAS Macro Repository: scheduler.sas File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -72,81 +72,55 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('nhanesfmtscrape_8sas.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('scheduler_8sas.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">nhanesfmtscrape.sas File Reference</div></div>
+  <div class="headertitle"><div class="title">scheduler.sas File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Creates a format catalog from NHANES documentation.  
+<p>Schedules a SAS job to run at a later time.  
 <a href="#details">More...</a></p>
 
-<p><a href="nhanesfmtscrape_8sas_source.html">Go to the source code of this file.</a></p>
+<p><a href="scheduler_8sas_source.html">Go to the source code of this file.</a></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section user"><dt>Purpose</dt><dd>This macro will read NHANES HTML documentation pages and create a format catalog and/or code file for the data</dd></dl>
+<div class="textblock"><dl class="section user"><dt>Purpose</dt><dd>This macro schedules the remainder of a SAS job to run at a later time. It was developed to be used in SAS Studio in order to delay the running of a background job submission.</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Rocio Lopez</dd></dl>
-<dl class="section date"><dt>Date</dt><dd>09-18-2018</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>03/26/2020</dd></dl>
 <dl class="section version"><dt>Version</dt><dd>SAS 9.4 or later</dd></dl>
-<dl class="section user"><dt>Usage</dt><dd>A call to this macro has some or all of these parameters (defaults given): <div class="fragment"><div class="line">%nhanesFmtScrape(</div>
-<div class="line">      cycle = </div>
-<div class="line">     ,files = </div>
-<div class="line">     ,omitmissing = 1</div>
-<div class="line">     ,fmtlibrary = work</div>
-<div class="line">     ,fmtcatalog = nhanesFormats</div>
-<div class="line">     ,fmtcodefile = </div>
-<div class="line">     ,prints = 1</div>
-<div class="line">     );</div>
+<dl class="section user"><dt>Usage</dt><dd>A call to this macro has some or all of these parameters (defaults given): <div class="fragment"><div class="line">%scheduler(when = );</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>SAS format catalog and/or .SAS file with PROC FORMAT code</dd></dl>
-<dl class="section note"><dt>Note</dt><dd><ul>
-<li>Each format will be named VarNameF.</li>
-</ul>
-<ul>
-<li>It is possible for format labels to have % or &amp; in which case a Warning message will be seen in the log (e.g. WARNING: Apparent symbolic reference LT not resolved.); this can be ignored.</li>
-</ul>
-</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cycle</td><td>NAHES cycle for html file(s), format should be YYYY-YYYY</td></tr>
-    <tr><td class="paramname">files</td><td>List of 1 or more NHANES data files for which to extract formats</td></tr>
-    <tr><td class="paramname">omitMissing</td><td>If yes, will omit formats for missing values <br  />
- Allowed options are: <br  />
- 1, yes, y for omitting missing values (DEFAULT) <br  />
- 0, no, n for including missing values</td></tr>
-    <tr><td class="paramname">fmtLibrary</td><td>SAS library in which to store the format catalog <br  />
- Default is WORK</td></tr>
-    <tr><td class="paramname">fmtCatalog</td><td>Name of generated SAS format catalog @ Default is nhanesFormats</td></tr>
-    <tr><td class="paramname">fmtCodeFile</td><td>Optional name of .SAS file in which to save PROC FORMAT code</td></tr>
-    <tr><td class="paramname">prints</td><td>If yes, prints a summary of all formats in catalog <br  />
- Allowed are are: <br  />
- Allowed options are: <br  />
- 1, yes, y to print catalog (DEFAULT) <br  />
- 0, no, n to not print catalog</td></tr>
+    <tr><td class="paramname">when</td><td>Datetime (ddmmmyyy:hr:mm) value specifying when you want the job to run <br  />
+ If no value provided then job will proceed immediately</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="getnhanesdata_8sas.html" title="downloads *.XPT files from NHANES website">getNhanesData.sas</a>, <a class="el" href="imptallxpt_8sas.html" title="Imports *.XPT files.">imptallxpt.sas</a></dd></dl>
-<dl class="section user"><dt>Example(s)</dt><dd><div class="fragment"><div class="line">libname fmt <span class="stringliteral">&quot;./nhanes2015to16&quot;</span>;</div>
-<div class="line">%NHANESFmtScrape(</div>
-<div class="line">      cycle = 2015-2016</div>
-<div class="line">     ,files = DEMO_I BMX_I</div>
-<div class="line">     ,fmtLibrary = fmt</div>
-<div class="line">     ,fmtCodeFile = <span class="stringliteral">&quot;./nhanes2015to16/formats.sas&quot;</span></div>
-<div class="line">     );</div>
+<dl class="section user"><dt>Example(s)</dt><dd><div class="fragment"><div class="line"> *Example 1: Schedule at a specific time/day;</div>
+<div class="line"> %scheduler(when=26mar2020:15:00);</div>
+<div class="line">   </div>
+<div class="line"> *Example 2: Use today/tomorrow <span class="keywordflow">for</span> more flexibility;</div>
+<div class="line">data _null_;</div>
+<div class="line">  call symput(<span class="stringliteral">&#39;Today&#39;</span>, left(put(<span class="stringliteral">&quot;&amp;SYSDATE9.&quot;</span>, date9.))); </div>
+<div class="line">  call symput(<span class="stringliteral">&#39;Tommorow&#39;</span>, left(put(intnx(<span class="stringliteral">&#39;day&#39;</span>, <span class="stringliteral">&quot;&amp;SYSDATE9.&quot;</span>d, 1), date9.)));     </div>
+<div class="line">run;</div>
+<div class="line"> </div>
+<div class="line">%scheduler(when=&amp;today:23:00);    **today at 11PM;</div>
+<div class="line">%scheduler(when=&amp;tommorow:05:00); **tomorrow at 5AM;</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd><b>03-25-2021</b> Changes to allow for $format <b>02-13-2020</b> Added option to omit formats for missing values </dd></dl>
+<dl class="section user"><dt>Revision History</dt><dd>none </dd></dl>
 
-<p class="definition">Definition in file <a class="el" href="nhanesfmtscrape_8sas_source.html">nhanesfmtscrape.sas</a>.</p>
+<p class="definition">Definition in file <a class="el" href="scheduler_8sas_source.html">scheduler.sas</a>.</p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.5-->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="nhanesfmtscrape_8sas.html">nhanesfmtscrape.sas</a></li>
+    <li class="navelem"><a class="el" href="scheduler_8sas.html">scheduler.sas</a></li>
     <li class="footer">Generated on Wed Jan 4 2023 15:19:28 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>

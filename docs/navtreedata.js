@@ -24,8 +24,10 @@
 */
 var NAVTREE =
 [
-  [ "SAS Macro Library", "index.html", [
-    [ "Macros", "files.html", "files" ]
+  [ "SAS Macro Repository", "index.html", [
+    [ "DOS-CORP Macros", "files.html", "files" ],
+    [ "Other Macros", "md_other_macros.html", null ],
+    [ "Other Macro Repositories", "md_other_repos.html", null ]
   ] ]
 ];
 

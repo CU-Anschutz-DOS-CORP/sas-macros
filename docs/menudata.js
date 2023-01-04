@@ -24,4 +24,5 @@
 */
 var menudata={children:[
 {text:"Home",url:"index.html"},
-{text:"Macros",url:"files.html"}]}
+{text:"DOS-CORP Macros",url:"files.html"},
+{text:"Other Resources",url:"pages.html"}]}
