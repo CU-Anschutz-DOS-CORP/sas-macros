@@ -98,6 +98,7 @@ $(document).ready(function(){initNavTree('missing_8sas.html',''); initResizable(
 <div class="line"> ,missPattern = 0</div>
 <div class="line"> ,printAll = 0</div>
 <div class="line"> ,sortBy = descending _nmiss</div>
+<div class="line"> ,reverseCol = 0</div>
 <div class="line"> ,out = _miss_</div>
 <div class="line"> ,rtffile = </div>
 <div class="line"> ,page = portrait</div>
@@ -123,6 +124,10 @@ $(document).ready(function(){initNavTree('missing_8sas.html',''); initResizable(
  1 = Yes, include all variables</td></tr>
     <tr><td class="paramname">sortBy</td><td>Allows sorting of OUT data set generated for report <br  />
  Default is DESCENDING _NMISS</td></tr>
+    <tr><td class="paramname">reverseCol</td><td>Reverse order of display for group variable (byVar) <br  />
+ Allowed options are: <br  />
+ 0 = No, display in ascending order (DEFAULT) <br  />
+ 1 = Yes, reverse and display in descending order</td></tr>
     <tr><td class="paramname">out</td><td>Name of output dataset <br  />
  Default is <em>missing</em></td></tr>
     <tr><td class="paramname">rtfFile</td><td>Location and name for output RTF file sourrounded by double quotes (e.g. "~userid/consult/missReport.rtf")</td></tr>
@@ -151,7 +156,8 @@ $(document).ready(function(){initNavTree('missing_8sas.html',''); initResizable(
 <div class="line"> </div>
 <div class="line">%missing(data=cars);</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd><b>01-22-2022</b> Added highLightVal and printAll options </dd></dl>
+<dl class="section user"><dt>Revision History</dt><dd><b>01-22-2022</b> Added highLightVal and printAll options <br  />
+ <b>01-31-2023</b> 1) Corrected labels for _PctMissi columns. 2) Added auto-filter and freeze panes to excel output. 3) Aded REVERSECOL option to control order of BYVAR columns. </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="missing_8sas_source.html">missing.sas</a>.</p>
 </div></div><!-- contents -->
@@ -161,7 +167,7 @@ $(document).ready(function(){initNavTree('missing_8sas.html',''); initResizable(
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="missing_8sas.html">missing.sas</a></li>
-    <li class="footer">Generated on Wed Jan 4 2023 15:19:28 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Mon Mar 6 2023 13:43:24 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>
