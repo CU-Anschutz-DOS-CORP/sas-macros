@@ -27,8 +27,8 @@
  @endcode
 
  @returns
- A sas data set with columns added for driving distance, driving distance units, and, 
- if requested, straight line distance
+ A sas data set with columns added for driving distance, driving distance units, 
+ driving time, and, if requested, straight line distance
  
  @note 
  @parblock
@@ -74,7 +74,7 @@
  @code{.sas}
  data zip_info;
 	input z1 @@;
-	if z1=00966 the z2=00969;
+	if z1=00966 then z2=00969;
 	else z2=12203;
 	format z1 z2 z5.;
 	datalines;
@@ -93,7 +93,9 @@
  
  @par Revision History
  @b 05-15-2019 Updated to also search for distances given in kilometers, 
- these are transfromed into miles
+ these are transformed into miles
+ @n @b 03-02-2023 Output dataset now includes drive time in seconds (with time6. format)
+ @n @b 03-06-2023 Optimized the way the data is read in and processed
 **/
 
 %macro zipDriveDistance(
@@ -247,75 +249,59 @@ run;
         stop;
     run;
         
-    filename x url "https://www.google.com/maps/dir/&zipcity1/&zipcity2/?force=lite";
-    filename z temp;
-         
-    %* file size;
-    data _null_; 
-        infile x recfm=f lrecl=1 end=eof; 
-        file z recfm=f lrecl=1;
-        input @1 x $char1.; 
-        put @1 x $char1.;
-        if eof;
-        call symputx('filesize',_n_);
-    run;
-         
-    %* Drive time as a numeric variable;
-    data _temp_;
-        retain zip1 &z1 zip2 &z2;
-        infile z recfm=f lrecl=&filesize. eof=done;
-        input @ 'miles' +(-15) @ '"' drive_distance :comma12. text $30.;
-           
-        drive_distance_units = compress(scan(text,1,'"'),"\");;
-        
-        output; 
-        keep zip1 zip2 drive_distance drive_distance_units;
-        stop;
-        done:
-        output;
-    run;
+    filename src temp;
 
-    %* If miles not reported, check KM;
-    proc sql noprint;
-        select drive_distance, drive_distance_units
-        into :dist, :units
-        from _temp_;
-    quit;    
+    %* Before getting data, make sure the website exists;
+    filename headout TEMP;
+    proc http url="https://www.google.com/maps/dir/&zipcity1/&zipcity2/?force=lite"
+        headerout=headout;
+    run;
+    
+    data _null_;
+        infile headout scanover truncover;
+        input @'HTTP/1.1' code 4. message $255.;
+        if _n_ = 1 then call symput("message", strip(message));
+    run;           
 
-    %if &dist eq . and %length(&units) eq 0 %then %do;
-        data _temp_;
-            retain zip1 &z1 zip2 &z2;
-            infile z recfm=f lrecl=&filesize. eof=done;
-            input @ ' km' +(-15) @ '"' drive_distance :comma12. text $30.;
-               
-            drive_distance_units = compress(scan(text,1,'"'),"\");
-            
-            output; 
-            
-            keep zip1 zip2 drive_distance drive_distance_units;
-            stop;
-            done:
-            output;
-        run;    
-        data _temp_;
-            set _temp_;
-            **convert to miles;
-            if drive_distance_units="km" then do;
-                drive_distance = round(divide(drive_distance, 1.609), 0.1);
-                drive_distance_units = "miles";            
-            end;
-            
-            **if other text given, set to missing;
-            if drive_distance_units not in ("km" "miles") then do;
-                drive_distance=.; drive_distance_units="";
+    %* If website exists then get data, otherwise put a message and continue;
+    %if "&message" eq "OK" %then %do;
+
+        proc http
+            url="https://www.google.com/maps/dir/&zipcity1/&zipcity2/?force=lite"
+            out=src;
+        run;
+
+        data _temp_ (keep = zip1 zip2 text--drive_duration);
+            infile src length = len lrecl = 32767;
+            input line $varying32767. len;
+            line = strip(line);
+            if index(upcase(line), 'MILE') then indx = index(upcase(line), 'MILE');
+            else if index(upcase(line), ' KM') then indx = index(upcase(line), ' KM');    
+            retain zip1 &z1  zip2 &z2;
+            if indx then do;
+                lineLen = length(line);  
+                startPos = find(reverse(substr(line, 1, indx - 1)), '"');
+                endPos = 0;
+                do i=1 to 3 until(endPos = 0); 
+                   endPos = find(substr(line, indx, lineLen - indx), '"', endPos + 1);
+                end;
+                text = substr(line, indx - startPos, startPos + endPos);
+                drive_distance = input(compress(scan(text,1,'\'), '",', 'ai'), best.);
+                drive_distance_units    = compress(scan(text,1,'\'), , "kai");
+                drive_duration     = compress(scan(text,3,'"'), "\");
+                format drive_distance comma32.2;
+                output;
             end;
         run;
-    %end; 
+
+    %end;
+
+    %else %put WARNING: Website for &z1 and &z2 could not be accessed. Reason: &message.. ;
+
+    filename src clear;
+    filename headout clear;
          
-    filename x clear;
-    filename z clear;
-         
-    %* add an observation to the data set DISTANCE_TIME;
+    %* add an observation to the data set _DISTANCE_;
     proc append base=_distance_ data=_temp_;
     run;
     
@@ -331,7 +317,7 @@ run;
 %*****************************************************************************;
 proc sql;
     create table &outdata 
-    as select a.*, b.drive_distance, b.drive_distance_units
+    as select a.*, b.drive_distance, b.drive_distance_units, b.drive_duration
     %if %upcase(&straightline) in (1 YES Y) %then %do;
     , zipcitydistance(a.&zipcode1, a.&zipcode2) as straight_line_distance_mi
     %end;
@@ -342,10 +328,13 @@ proc sql;
        %if &vartype2 eq N %then %do; put(a.&zipcode2, z5.) %end;
        %else %if &vartype2 eq C %then %do; put(a.&zipcode2, $5.) %end; 
        =put(b.zip2, z5.);
+quit;
 
-%* If same origin and destination put 0;
-data &outdata;
+%* Additional tidy up;
+data &outdata (drop = drive_distance drive_distance_units drive_duration);
     set &outdata;
+    
+    **If same origin and destination put 0;
     if 
       %if &vartype1 eq N %then %do; put(&zipcode1, z5.) %end;
       %else %if &vartype1 eq C %then %do; put(&zipcode1, $5.) %end;
@@ -355,7 +344,48 @@ data &outdata;
      then do;
         drive_distance=0;
         drive_distance_units='miles';
+        drive_duration='0 min';
     end;
+    
+    **convert km to miles;
+    if drive_distance_units in ("mile" "miles") then
+    	drive_miles = drive_distance;
+    else if drive_distance_units = "km" then
+    	drive_miles = round(divide(drive_distance, 1.609), 0.1);
+    	
+	**drive_time as numeric;
+	if find(upcase(drive_duration), 'DAY') then do;	
+		if find(upcase(drive_duration), 'HR') and 
+		   find(upcase(drive_duration), 'MIN') then
+			drive_time = (input(scan(drive_duration, 1), 8.) * 86400) + 
+						 (input(scan(drive_duration, 3), 8.) * 3600) + 
+						 (input(scan(drive_duration, 5), 8.) * 60);
+		else if find(upcase(drive_duration), 'HR') and 
+				not find(upcase(drive_duration), 'MIN') then
+			drive_time = (input(scan(drive_duration, 1), 8.) * 86400) + 
+						 (input(scan(drive_duration, 3), 8.) * 3600);		
+		else if not find(upcase(drive_duration), 'HR') and 
+				    find(upcase(drive_duration), 'MIN') then
+			drive_time = (input(scan(drive_duration, 1), 8.) * 86400) + 
+					     (input(scan(drive_duration, 3), 8.) * 60);		
+		else drive_time = input(scan(drive_duration, 1), 8.) * 86400;	
+	end;
+	
+	else if find(upcase(drive_duration), 'HR') then do;
+		if find(upcase(drive_duration), 'MIN') then
+			drive_time = (input(scan(drive_duration, 1), 8.) * 3600) + 
+					 	 (input(scan(drive_duration, 3), 8.) * 60);
+		else drive_time = input(scan(drive_duration, 1), 8.) * 3600;					 	 
+	end;
+	
+	else if find(upcase(drive_duration), 'MIN') then do;
+		drive_time = input(scan(drive_duration, 1), 8.) * 60;
+	end;
+	
+	format drive_miles comma32.2 drive_time time6.;
+	label drive_miles = "Driving distance (miles)"
+		  drive_time = "Driving time (seconds, formated as hh:mm)"
+		  straight_line_distance_mi = "Geodetic distance (miles)";
 run;
 
 %*****************************************************************************;
