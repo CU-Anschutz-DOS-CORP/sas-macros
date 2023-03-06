@@ -24,6 +24,7 @@
 	,missPattern = 0
 	,printAll = 0
 	,sortBy = descending _nmiss
+	,reverseCol = 0
 	,out = _miss_
 	,rtffile = 
 	,page = portrait
@@ -59,6 +60,11 @@
 
  @param sortBy Allows sorting of OUT data set generated for report
  @n Default is DESCENDING _NMISS
+ 
+ @param reverseCol Reverse order of display for group variable (byVar)
+ @n Allowed options are:
+ @n 0 = No, display in ascending order (DEFAULT)
+ @n 1 = Yes, reverse and display in descending order
  
  @param out Name of output dataset
  @n Default is _missing_
@@ -97,6 +103,9 @@
  
  @par Revision History
  @b 01-22-2022 Added highLightVal and printAll options
+ @n @b 01-31-2023 1) Corrected labels for _PctMissi columns. 2) Added auto-filter and
+ freeze panes to excel output. 3) Aded REVERSECOL option to control order of BYVAR 
+ columns.
 **/
 
 %macro missing(
@@ -107,6 +116,7 @@
     misspattern = 0,
     printall = 0,
     sortby = descending _nmiss, /* other options would be varname, _nmiss, _n descending allowed*/
+    reverseCol = 0,
     out = _missing_,
     rtffile = ,
     xlsxfile = ,
@@ -251,6 +261,14 @@ quit;
 %end; %*end to printall check check;
 
 %* Check SORTBY options;
+
+%* Check REVERSECOL valid options;
+%if not(%upcase(&reversecol) in (0 1)) %then %do;
+    %put WARNING: REVERSECOL must be either 0 or 1.;
+    %put WARNING: REVERSECOL = **&reversecol**;
+    %put WARNING: Default value of 0 will be used for REVERSECOL;
+    %let reversecol=0;
+%end; %*end to misspattern check check;
 
 %* Check PAGE options;
 %if not(%upcase(&page)  in (PORTRAIT LANDSCAPE)) %then %do;
@@ -481,11 +499,11 @@ data &out;
           VarType  = "Type"
           _N       = "Total: N obs"
           _NMiss   = "Total: N missing"
-          _PctMiss = "Total: % missing"
+          _PctMiss = "Total: % missing / %left(%qsysfunc(putn(&TotalN, __countf.)))"
           %if &NGroups gt 1 %then %do i=1 %to &NGroups;
             _N&i     = "&&GroupLab&i: N obs"
             _NMiss&i = "&&GroupLab&i: N missing"
-            _PctMiss = "&&GroupLab&i: % missing"
+            _PctMiss&i = "&&GroupLab&i: % missing / %left(%qsysfunc(putn(&&GroupN&i, __countf.)))"
           %end; ;
 run;
 
@@ -559,7 +577,7 @@ quit;
         ODS path (PREPEND) work.TEMPLAT(update);
         
         proc template;
-            define style myrtf;
+            define style work.myrtf;
             parent=styles.rtf;
             style body from document /
                 leftmargin=0.5in
@@ -581,7 +599,12 @@ quit;
     %end;
     
     %if %length(&xlsxfile) gt 0 %then %do;
-        ods excel file = &xlsxfile style = myrtf options(sheet_name = "Missing value report");
+        ods excel file = &xlsxfile style = myrtf 
+        	options(autofilter="all"  
+            frozen_headers="on"
+            frozen_rowheaders="3"
+            flow="Tables"
+        	sheet_name = "Missing value report");
     %end;
     
     %put **********************************************;
@@ -594,13 +617,27 @@ quit;
         %let GroupN&i = %left(%qsysfunc(putn(&&GroupN&i, __countf.)));
     %end;
     
+    %* Order of byVar columns;
+    %if &NGroups gt 1 %then %do;
+    	%if &reversecol=1 %then %do;
+    		%let startVal = &NGroups;
+    		%let endVal = 1;
+    		%let byVal = -1;    	
+    	%end;
+    	%else %do;
+    		%let startVal = 1;
+    		%let endVal = &NGroups;
+    		%let byVal = 1;
+    	%end;
+    %end;
+    
     *ods listing close;
     proc report data= &out %if &printall = 0 %then %do; (where = (_PctMiss gt 0)) %end; nowd list;
     
         columns ("Variable Description" VarName VarLabel VarType)
                 ("% Missing" _PctMiss 
                   %if &NGroups gt 1 %then %do;
-                    ("By %upcase(&byvar)" %do i=1 %to &NGroups; _PctMiss&i %end;)
+                    ("By %upcase(&byvar)" %do i=&startVal %to &endVal %by &byVal; _PctMiss&i %end;)
                   %end;
                 )
         ;
@@ -625,7 +662,7 @@ quit;
             if _PctMiss gt &highlightval then call define(_col_, "style", "style={foreground=red font_weight=bold}");
         endcomp;
     
-        %if &NGroups gt 1 %then %do i=1 %to &NGroups;
+        %if &NGroups gt 1 %then %do i=&startVal %to &endVal %by &byVal;
             define _PctMiss&i / display "&&GroupLab&i / (n = &&GroupN&i)"
               style(column) = {just = center }  style(header) = {just = center };
             compute _PctMiss&i ;
