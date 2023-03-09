@@ -96,6 +96,7 @@
  these are transformed into miles
  @n @b 03-02-2023 Output dataset now includes drive time in seconds (with time6. format)
  @n @b 03-06-2023 Optimized the way the data is read in and processed
+ @n @b 03-07-2023 Skipping zip codes not found in sashelp.zipcode (need zip+city for search)
 **/
 
 %macro zipDriveDistance(
@@ -217,6 +218,8 @@ data _null_;
 run;
  
 %* Create a loop to access Google Maps multiple time;
+%let zipcity1 = ;
+%let zipcity2 = ;
 %do j=1 %to &nzips;
     data _null_;
         nrec = &j;
@@ -243,72 +246,87 @@ run;
                 
         %* Some searches do not work unless you include city and date;
         %* Example syntax for query: North+Olmsted,+OH+44070;
-        call symputx('zipcity1', tranwrd(catx(' ', zipcity(__zip1), __zip1), " ", "+"));
+        if not missing(zipcity(__zip1)) then 
+            call symputx('zipcity1', tranwrd(catx(' ', zipcity(__zip1), __zip1), " ", "+"));
+        if not missing(zipcity(__zip2)) then 
         call symputx('zipcity2', tranwrd(catx(' ', zipcity(__zip2), __zip2), " ", "+"));
         
         stop;
     run;
+
+    %* If city not found, skip to next pair;
+    %if %length(&zipcity1)=0 or %length(&zipcity2)=0 %then
+    %put NOTE: At least one zip code not found in SASHELP.ZIPCODE, skipping to next pair.;
+
+    %if %length(&zipcity1) and %length(&zipcity2) %then %do; 
+ 
+        filename src temp;
+
+        %* Before getting data, make sure the website exists;
+        filename headout TEMP;
+        proc http url="https://www.google.com/maps/dir/&zipcity1/&zipcity2/?force=lite"
+            headerout=headout;
+        run;
         
-    filename src temp;
+        data _null_;
+            infile headout scanover truncover;
+            input @'HTTP/1.1' code 4. message $255.;
+            if _n_ = 1 then call symput("message", strip(message));
+        run;           
 
-    %* Before getting data, make sure the website exists;
-    filename headout TEMP;
-    proc http url="https://www.google.com/maps/dir/&zipcity1/&zipcity2/?force=lite"
-        headerout=headout;
-    run;
-    
-    data _null_;
-        infile headout scanover truncover;
-        input @'HTTP/1.1' code 4. message $255.;
-        if _n_ = 1 then call symput("message", strip(message));
-    run;           
+        %* If website exists then get data, otherwise put a message and continue;
+        %if "&message" eq "OK" %then %do;
 
-    %* If website exists then get data, otherwise put a message and continue;
-    %if "&message" eq "OK" %then %do;
+            proc http
+                url="https://www.google.com/maps/dir/&zipcity1/&zipcity2/?force=lite"
+                out=src;
+            run;
 
-        proc http
-            url="https://www.google.com/maps/dir/&zipcity1/&zipcity2/?force=lite"
-            out=src;
-        run;
-
-        data _temp_ (keep = zip1 zip2 text--drive_duration);
-            infile src length = len lrecl = 32767;
-            input line $varying32767. len;
-            line = strip(line);
-            if index(upcase(line), 'MILE') then indx = index(upcase(line), 'MILE');
-            else if index(upcase(line), ' KM') then indx = index(upcase(line), ' KM');    
-            retain zip1 &z1  zip2 &z2;
-            if indx then do;
-                lineLen = length(line);  
-                startPos = find(reverse(substr(line, 1, indx - 1)), '"');
-                endPos = 0;
-                do i=1 to 3 until(endPos = 0); 
-                   endPos = find(substr(line, indx, lineLen - indx), '"', endPos + 1);
+            data _temp_ (keep = zip1 zip2 text--drive_duration);
+                infile src length = len lrecl = 32767;
+                input line $varying32767. len;
+                line = strip(line);
+                if index(upcase(line), 'MILE') then indx = index(upcase(line), 'MILE');
+                else if index(upcase(line), ' KM') then indx = index(upcase(line), ' KM');    
+                retain zip1 &z1  zip2 &z2;
+                if indx then do;
+                    lineLen = length(line);  
+                    startPos = find(reverse(substr(line, 1, indx - 1)), '"');
+                    endPos = 0;
+                    do i=1 to 3 until(endPos = 0); 
+                       endPos = find(substr(line, indx, lineLen - indx), '"', endPos + 1);
+                    end;
+                    text = substr(line, indx - startPos, startPos + endPos);
+                    drive_distance = input(compress(scan(text,1,'\'), '",', 'ai'), ?? best.);
+                    drive_distance_units    = compress(scan(text,1,'\'), , "kai");
+                    drive_duration     = compress(scan(text,3,'"'), "\");
+                    format drive_distance comma32.2;                    
                 end;
-                text = substr(line, indx - startPos, startPos + endPos);
-                drive_distance = input(compress(scan(text,1,'\'), '",', 'ai'), best.);
-                drive_distance_units    = compress(scan(text,1,'\'), , "kai");
-                drive_duration     = compress(scan(text,3,'"'), "\");
-                format drive_distance comma32.2;
-                output;
-            end;
-        run;
+                if not missing(drive_distance) then output;
+            run;
 
-    %end;
+        %end;
 
-    %else %put WARNING: Website for &z1 and &z2 could not be accessed. Reason: &message.. ;
+        %else %put NOTE: Website for &z1 and &z2 could not be accessed. Reason: &message.. ;
 
-    filename src clear;
-    filename headout clear;
-         
-    %* add an observation to the data set _DISTANCE_;
-    proc append base=_distance_ data=_temp_;
-    run;
-    
+        filename src clear;
+        filename headout clear;
+             
+        %* add an observation to the data set _DISTANCE_;
+        proc append base=_distance_ data=_temp_;
+        run;            
+
+    %end; %* end to if zipcity1 and zipcity2;
+
     %* delete temp;
     proc datasets lib=work nolist;
         delete _temp_;
-    quit;        
+    quit; 
+
+	%let z1 = ;
+	%let z2 = ;
+    %let zipcity1 = ;
+    %let zipcity2 = ; 
     
 %end; %* end to j to nzips;
 
@@ -348,9 +366,9 @@ data &outdata (drop = drive_distance drive_distance_units drive_duration);
     end;
     
     **convert km to miles;
-    if drive_distance_units in ("mile" "miles") then
+    if compress(drive_distance_units) in ("mile" "miles") then
     	drive_miles = drive_distance;
-    else if drive_distance_units = "km" then
+    else if compress(drive_distance_units) = "km" then
     	drive_miles = round(divide(drive_distance, 1.609), 0.1);
     	
 	**drive_time as numeric;
