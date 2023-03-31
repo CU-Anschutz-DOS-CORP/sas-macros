@@ -120,7 +120,7 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
  All levels will be displayed</td></tr>
     <tr><td class="paramname">ord1</td><td>List of ordinal variables to summarize as n (%) and compare using Wilcoxon Rand Sum or Krukal-Wallis tests</td></tr>
     <tr><td class="paramname">class</td><td>The variable which defines the groups <br  />
- Optional; must be a numeric variable</td></tr>
+ Optional; must be a numeric variable and categorical (do not use range formats)</td></tr>
     <tr><td class="paramname">subset</td><td>Optional expression to be used in a WHERE statement to in order to subset the data set.</td></tr>
     <tr><td class="paramname">sdopt</td><td>Allows to choose how the standard deviation should be displayed <br  />
  Allowed options are: <br  />
@@ -184,7 +184,7 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
     <tr><td class="paramname">list</td><td>List the variables in the order they should be reported when SORTBY=_LIST <br  />
  If you do not include all variables, the rest will be included in input order <br  />
  You can include section headers in the LIST parameter <br  />
- Each section header must start with TblHdr_ and be ≤ 25 characters in length; use underscore (_) instead of space</td></tr>
+ Each section header must start with TblHdr_ and be no more than 25 characters in length; use underscore (_) instead of space</td></tr>
     <tr><td class="paramname">f1</td><td>Format applied to counts (n) in RTFOUT <br  />
  Default is __COUNTF.</td></tr>
     <tr><td class="paramname">f2</td><td>Format applied to mean, SD, medians, P25, P75, min, max in RTFOUT <br  />
@@ -280,7 +280,7 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <li>Default is to perform Exact tests for categorical variables if more than 50% of class have counts less than 5 but this can be manipulated with the CUTEXACT option. To suppress exact tests then set CUTEXACT to a value greater than 100. A value of 0 would produce Exact tests for all variables. </li>
 <li>If no class variable specified, TotalCol is ignored. If you want to print the N or N miss columns, use NCOL=2 or MISSCOL=2 otherwise it will be ignored. *3/20/2020: Now either 1 or 2 will work. </li>
 <li>You can list variables with the X1-X99. The X: or FirstCol &ndash; LastCol syntax are not supported. </li>
-<li>You can include section headers in the LIST parameter. These will be included in the label column. Each section header must start with TblHdr_ and be ≤ 25 characters in length. Use an underscore (_) instead of a space. To insert blank lines use TblHdr__ (2 underscores). </li>
+<li>You can include section headers in the LIST parameter. These will be included in the label column. Each section header must start with TblHdr_ and be no more than 25 characters in length. Use an underscore (_) instead of a space. To insert blank lines use TblHdr__ (2 underscores). </li>
 <li>If running on interactive Linux SAS, no output is listed on results window. OUT and RTFOUT are generated and if you specify an output file that will be created. </li>
 <li>Unless running on SAS Studio, output might not look right in results window but styling in RTF file will be fine <br  />
  </li>
@@ -335,7 +335,9 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <div class="line">         ,tbltitle=<span class="stringliteral">&quot;Data summaries&quot;</span></div>
 <div class="line">       );</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd><b>07-22-2022</b> Fixed bug incorporated on previous update that was causing Fisher's Exact test p-val to be flagged as Pearson's chi-sq <br  />
+<dl class="section user"><dt>Revision History</dt><dd><b>03-17-2023</b> Updated documentation to exclude special characters causing issues when running session with ENCODING=WLATIN1 <br  />
+ <b>03-13-2023</b> Added flow="Tables" option to ODS EXCEL <br  />
+ <b>07-22-2022</b> Fixed bug incorporated on previous update that was causing Fisher's Exact test p-val to be flagged as Pearson's chi-sq <br  />
  <b>06-29-2022</b> Class variable can now have &gt;9 levels or be coded with more than 1 digit <br  />
  <b>03-18-2022</b> Fixed footnotes for p-values so that Fisher's get excluded if not used <br  />
  <b>04-13-2021</b> Fixed bug that could prevent ORs of CAT2 variables from being properly displayed <br  />
@@ -365,7 +367,7 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="summarize_8sas.html">summarize.sas</a></li>
-    <li class="footer">Generated on Wed Mar 8 2023 15:20:46 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Fri Mar 31 2023 15:18:09 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>

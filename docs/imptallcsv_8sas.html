@@ -7,7 +7,7 @@
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="shortcut icon" href="icon.png" type="image/x-icon" />
-<title>SAS Macro Repository: getnhanesdata.sas File Reference</title>
+<title>SAS Macro Repository: imptallcsv.sas File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -72,63 +72,57 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('getnhanesdata_8sas.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('imptallcsv_8sas.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">getnhanesdata.sas File Reference</div></div>
+  <div class="headertitle"><div class="title">imptallcsv.sas File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>downloads *.XPT files from NHANES website  
+<p>Imports *.CSV files.  
 <a href="#details">More...</a></p>
 
-<p><a href="getnhanesdata_8sas_source.html">Go to the source code of this file.</a></p>
+<p><a href="imptallcsv_8sas_source.html">Go to the source code of this file.</a></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section user"><dt>Purpose</dt><dd>This macro downloads and saves specified .XPT files from NHANES website</dd></dl>
+<div class="textblock"><dl class="section user"><dt>Purpose</dt><dd>This macro will import all *.CSV files found in the specified directory</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Rocio Lopez</dd></dl>
-<dl class="section date"><dt>Date</dt><dd>01-22-2019</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>11-21-2014</dd></dl>
 <dl class="section version"><dt>Version</dt><dd>SAS 9.4 or later</dd></dl>
-<dl class="section user"><dt>Usage</dt><dd>A call to this macro has some or all of these parameters (defaults given): <div class="fragment"><div class="line">%getNhanesData(</div>
-<div class="line">     cycle = </div>
-<div class="line">     ,files = </div>
-<div class="line">     ,saveIn = </div>
+<dl class="section user"><dt>Usage</dt><dd>A call to this macro has some or all of these parameters (defaults given): <div class="fragment"><div class="line">%imptallcsv(</div>
+<div class="line">     directory =</div>
+<div class="line">     ,library = work</div>
+<div class="line">     ,guessingrows = all</div>
 <div class="line">     );</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>One or more .XPT files saved in the specified directory</dd></dl>
-<dl class="section note"><dt>Note</dt><dd><ul>
-<li>Go to <a href="https://wwwn.cdc.gov/nchs/nhanes/Default.aspx">https://wwwn.cdc.gov/nchs/nhanes/Default.aspx</a> to view available cycles and data sets</li>
-</ul>
-<ul>
-<li>We recommend saving the XPT you use as online files are sometimes updated and this will ensure you can reproduce results, if needed </li>
-</ul>
-</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>One SAS data set per each imported CSV file</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Subfolders of directory will not be searched</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cycle</td><td>NHANES cycle you want to download (format XXXX-XXXX) </td></tr>
-    <tr><td class="paramname">files</td><td>Name of file(s) you want to download </td></tr>
-    <tr><td class="paramname">saveIn</td><td>Location in which to save the .XPT file(s)</td></tr>
+    <tr><td class="paramname">directory</td><td>Folder where all .CSV files are found; do not use quotes</td></tr>
+    <tr><td class="paramname">library</td><td>SAS library in which to store imported files <br  />
+ Default is WORK</td></tr>
+    <tr><td class="paramname">guessingrows</td><td>Specifies the number of rows of the file to scan to determine the appropriate data type and length for the variables. <br  />
+ Default is ALL rows.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="imptallxpt_8sas.html" title="Imports *.XPT files.">imptallxpt.sas</a>, <a class="el" href="nhanesfmtscrape_8sas.html" title="Creates a format catalog from NHANES documentation.">nhanesfmtscrape.sas</a></dd></dl>
-<dl class="section user"><dt>Example(s)</dt><dd><div class="fragment"><div class="line">%getNhanesData(</div>
-<div class="line">      cycle  = 2015-2016</div>
-<div class="line">     ,files  = DEMO_I BMX_I</div>
-<div class="line">     ,saveIn = ./nhanes2015to16</div>
-<div class="line">     );</div>
+<dl class="section user"><dt>Example(s)</dt><dd><div class="fragment"><div class="line">%imptallcsv(directory=./csvFiles);</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd><b>09-04-2021</b> If file does not exist, will now print out warning message and continue to next file </dd></dl>
+<dl class="section user"><dt>Revision History</dt><dd><b>03-31-2023</b> Updated to run in PC SAS as well as Linux SAS <br  />
+ <b>03-21-2019</b> - Changed how upper/lower case files are called and added an error check for when folder has no .csv files <br  />
+ <b>09-19-2018</b> - Added LIBRARY parameter and error checks <br  />
+ <b>07-10-2017</b> Added GUESSINGROWS option </dd></dl>
 
-<p class="definition">Definition in file <a class="el" href="getnhanesdata_8sas_source.html">getnhanesdata.sas</a>.</p>
+<p class="definition">Definition in file <a class="el" href="imptallcsv_8sas_source.html">imptallcsv.sas</a>.</p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.5-->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="getnhanesdata_8sas.html">getnhanesdata.sas</a></li>
+    <li class="navelem"><a class="el" href="imptallcsv_8sas.html">imptallcsv.sas</a></li>
     <li class="footer">Generated on Fri Mar 31 2023 15:18:09 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>

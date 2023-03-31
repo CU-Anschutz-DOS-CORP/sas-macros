@@ -368,8 +368,8 @@ $(document).ready(function(){initNavTree('zipdrivedistance_8sas_source.html','')
 <div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>                infile src length = len lrecl = 32767;</div>
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>                input line $varying32767. len;</div>
 <div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>                line = strip(line);</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>                <span class="keywordflow">if</span> index(upcase(line), <span class="stringliteral">&#39;MILE&#39;</span>) then indx = index(upcase(line), &#39;MILE&#39;);</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>                else if index(upcase(line), &#39; KM&#39;) then indx = index(upcase(line), &#39; KM&#39;);    </div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>                <span class="keywordflow">if</span> index(line, <span class="stringliteral">&#39;mile&#39;</span>) then indx = index(line, &#39;mile&#39;);</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>                else if index(line, &#39; km&#39;) then indx = index(line, &#39; mi&#39;);     </div>
 <div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                retain zip1 &amp;z1  zip2 &amp;z2;</div>
 <div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                if indx then do;</div>
 <div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>                    lineLen = length(line);  </div>
@@ -379,12 +379,12 @@ $(document).ready(function(){initNavTree('zipdrivedistance_8sas_source.html','')
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>                       endPos = find(substr(line, indx, lineLen - indx), &#39;&quot;&#39;, endPos + 1);</div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>                    end;</div>
 <div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>                    text = substr(line, indx - startPos, startPos + endPos);</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>                    drive_distance = input(compress(scan(text,1,&#39;\&#39;), &#39;&quot;,&#39;, &#39;ai&#39;), best.);</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>                    drive_distance = input(compress(scan(text,1,&#39;\&#39;), &#39;&quot;,&#39;, &#39;ai&#39;), ?? best.);</div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>                    drive_distance_units    = compress(scan(text,1,&#39;\&#39;), , &quot;kai&quot;);</div>
 <div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>                    drive_duration     = compress(scan(text,3,&#39;&quot;&#39;), &quot;\&quot;);</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>                    format drive_distance comma32.2;</div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>                    output;</div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>                end;</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>                    format drive_distance comma32.2;                    </div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>                end;</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>                if not missing(drive_distance) then output;</div>
 <div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>            run;</div>
 <div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span> </div>
 <div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>        %end;</div>
@@ -396,112 +396,118 @@ $(document).ready(function(){initNavTree('zipdrivedistance_8sas_source.html','')
 <div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>             </div>
 <div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>        %* add an observation to the data set _DISTANCE_;</div>
 <div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        proc append base=_distance_ data=_temp_;</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>        run;</div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>        </div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>        %* delete temp;</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>        proc datasets lib=work nolist;</div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>            delete _temp_;</div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>        quit;     </div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span> </div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>    %end; %* end to if zipcity1 and zipcity2;</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>        run;            </div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span> </div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>    %end; %* end to if zipcity1 and zipcity2;</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span> </div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>    %* delete temp;</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>    proc datasets lib=work nolist;</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>        delete _temp_;</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>    quit; </div>
 <div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span> </div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>    %let zipcity1 = ;</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    %let zipcity2 = ; </div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>    </div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>%end; %* end to j to nzips;</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span> </div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>%*****************************************************************************;</div>
-<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>%* ADD DISTANCE TO ORIGINAL DATA (ALLOW CHARACTER TO NUMERIC MERGE)           ;</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>  %let z1 = ;</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>  %let z2 = ;</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>    %let zipcity1 = ;</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>    %let zipcity2 = ; </div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>    </div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>%end; %* end to j to nzips;</div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span> </div>
 <div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>%*****************************************************************************;</div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>proc sql;</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>    create table &amp;outdata </div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>    as select a.*, b.drive_distance, b.drive_distance_units, b.drive_duration</div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>    %if %upcase(&amp;straightline) in (1 YES Y) %then %do;</div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>    , zipcitydistance(a.&amp;zipcode1, a.&amp;zipcode2) as straight_line_distance_mi</div>
-<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>    %end;</div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>    from &amp;data a left join _distance_ b</div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    on %if &amp;vartype1 eq N %then %do; put(a.&amp;zipcode1, z5.) %end;</div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>       %else %if &amp;vartype1 eq C %then %do; put(a.&amp;zipcode1, $5.) %end;</div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>       =put(b.zip1, z5.) and </div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>       %if &amp;vartype2 eq N %then %do; put(a.&amp;zipcode2, z5.) %end;</div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>       %else %if &amp;vartype2 eq C %then %do; put(a.&amp;zipcode2, $5.) %end; </div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>       =put(b.zip2, z5.);</div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>quit;</div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span> </div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>%* Additional tidy up;</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>data &amp;outdata (drop = drive_distance drive_distance_units drive_duration);</div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>    set &amp;outdata;</div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>    </div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>    **If same origin and destination put 0;</div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>    if </div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>      %if &amp;vartype1 eq N %then %do; put(&amp;zipcode1, z5.) %end;</div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>      %else %if &amp;vartype1 eq C %then %do; put(&amp;zipcode1, $5.) %end;</div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>      eq</div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>      %if &amp;vartype2 eq N %then %do; put(&amp;zipcode2, z5.) %end;</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>      %else %if &amp;vartype2 eq C %then %do; put(&amp;zipcode2, $5.) %end; </div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>     then do;</div>
-<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>        drive_distance=0;</div>
-<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>        drive_distance_units=&#39;miles&#39;;</div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>        drive_duration=&#39;0 min&#39;;</div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>    end;</div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>    </div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>    **convert km to miles;</div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>    if compress(drive_distance_units) in (&quot;mile&quot; &quot;miles&quot;) then</div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>      drive_miles = drive_distance;</div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>    else if compress(drive_distance_units) = &quot;km&quot; then</div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>      drive_miles = round(divide(drive_distance, 1.609), 0.1);</div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>      </div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>  **drive_time as numeric;</div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>  if find(upcase(drive_duration), &#39;DAY&#39;) then do; </div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>    if find(upcase(drive_duration), &#39;HR&#39;) and </div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>       find(upcase(drive_duration), &#39;MIN&#39;) then</div>
-<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>      drive_time = (input(scan(drive_duration, 1), 8.) * 86400) + </div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>             (input(scan(drive_duration, 3), 8.) * 3600) + </div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>             (input(scan(drive_duration, 5), 8.) * 60);</div>
-<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>    else if find(upcase(drive_duration), &#39;HR&#39;) and </div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>        not find(upcase(drive_duration), &#39;MIN&#39;) then</div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>      drive_time = (input(scan(drive_duration, 1), 8.) * 86400) + </div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>             (input(scan(drive_duration, 3), 8.) * 3600);   </div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>    else if not find(upcase(drive_duration), &#39;HR&#39;) and </div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>            find(upcase(drive_duration), &#39;MIN&#39;) then</div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>      drive_time = (input(scan(drive_duration, 1), 8.) * 86400) + </div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>               (input(scan(drive_duration, 3), 8.) * 60);   </div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    else drive_time = input(scan(drive_duration, 1), 8.) * 86400; </div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>  end;</div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>  </div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>  else if find(upcase(drive_duration), &#39;HR&#39;) then do;</div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>    if find(upcase(drive_duration), &#39;MIN&#39;) then</div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>      drive_time = (input(scan(drive_duration, 1), 8.) * 3600) + </div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>             (input(scan(drive_duration, 3), 8.) * 60);</div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>    else drive_time = input(scan(drive_duration, 1), 8.) * 3600;             </div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>  end;</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>  </div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>  else if find(upcase(drive_duration), &#39;MIN&#39;) then do;</div>
-<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>    drive_time = input(scan(drive_duration, 1), 8.) * 60;</div>
-<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>  end;</div>
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>  </div>
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>  format drive_miles comma32.2 drive_time time6.;</div>
-<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>  label drive_miles = &quot;Driving distance (miles)&quot;</div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>      drive_time = &quot;Driving time (seconds, formated as hh:mm)&quot;</div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>      straight_line_distance_mi = &quot;Geodetic distance (miles)&quot;;</div>
-<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>run;</div>
-<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span> </div>
-<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>%*****************************************************************************;</div>
-<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>%* DELETE DBS                                                                 ;</div>
-<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>%*****************************************************************************;</div>
-<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>%if &amp;debug ne 1 %then %do;</div>
-<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>    proc datasets lib=work nolist;</div>
-<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>        delete _zips_ _distance_;</div>
-<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>    quit;        </div>
-<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>%end;</div>
-<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span> </div>
-<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>%*****************************************************************************;</div>
-<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>%* MEND MACRO                                                                 ;</div>
-<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>%*****************************************************************************;</div>
-<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>ods listing;</div>
-<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>options nomlogic nomlogicnest; </div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>%* ADD DISTANCE TO ORIGINAL DATA (ALLOW CHARACTER TO NUMERIC MERGE)           ;</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>%*****************************************************************************;</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>proc sort data=_distance_ nodupkey;</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>  by zip1 zip2;</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>run;</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span> </div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>proc sql;</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    create table &amp;outdata </div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>    as select a.*, b.drive_distance, b.drive_distance_units, b.drive_duration</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>    %if %upcase(&amp;straightline) in (1 YES Y) %then %do;</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>    , zipcitydistance(a.&amp;zipcode1, a.&amp;zipcode2) as straight_line_distance_mi</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>    %end;</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>    from &amp;data a left join _distance_ b</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>    on %if &amp;vartype1 eq N %then %do; put(a.&amp;zipcode1, z5.) %end;</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>       %else %if &amp;vartype1 eq C %then %do; put(a.&amp;zipcode1, $5.) %end;</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>       =put(b.zip1, z5.) and </div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>       %if &amp;vartype2 eq N %then %do; put(a.&amp;zipcode2, z5.) %end;</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>       %else %if &amp;vartype2 eq C %then %do; put(a.&amp;zipcode2, $5.) %end; </div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>       =put(b.zip2, z5.);</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>quit;</div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span> </div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>%* Additional tidy up;</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>data &amp;outdata (drop = drive_distance drive_distance_units drive_duration);</div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>    set &amp;outdata;</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>    </div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>    **If same origin and destination put 0;</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>    if </div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>      %if &amp;vartype1 eq N %then %do; put(&amp;zipcode1, z5.) %end;</div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>      %else %if &amp;vartype1 eq C %then %do; put(&amp;zipcode1, $5.) %end;</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>      eq</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>      %if &amp;vartype2 eq N %then %do; put(&amp;zipcode2, z5.) %end;</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>      %else %if &amp;vartype2 eq C %then %do; put(&amp;zipcode2, $5.) %end; </div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>     then do;</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>        drive_distance=0;</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>        drive_distance_units=&#39;miles&#39;;</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>        drive_duration=&#39;0 min&#39;;</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>    end;</div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>    </div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>    **convert km to miles;</div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>    if compress(drive_distance_units) in (&quot;mile&quot; &quot;miles&quot;) then</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>      drive_miles = drive_distance;</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>    else if compress(drive_distance_units) = &quot;km&quot; then</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>      drive_miles = round(divide(drive_distance, 1.609), 0.1);</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>      </div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>  **drive_time as numeric;</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>  if find(upcase(drive_duration), &#39;DAY&#39;) then do; </div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>    if find(upcase(drive_duration), &#39;HR&#39;) and </div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>       find(upcase(drive_duration), &#39;MIN&#39;) then</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>      drive_time = (input(scan(drive_duration, 1), 8.) * 86400) + </div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>             (input(scan(drive_duration, 3), 8.) * 3600) + </div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>             (input(scan(drive_duration, 5), 8.) * 60);</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    else if find(upcase(drive_duration), &#39;HR&#39;) and </div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>        not find(upcase(drive_duration), &#39;MIN&#39;) then</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>      drive_time = (input(scan(drive_duration, 1), 8.) * 86400) + </div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>             (input(scan(drive_duration, 3), 8.) * 3600);   </div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    else if not find(upcase(drive_duration), &#39;HR&#39;) and </div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>            find(upcase(drive_duration), &#39;MIN&#39;) then</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>      drive_time = (input(scan(drive_duration, 1), 8.) * 86400) + </div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>               (input(scan(drive_duration, 3), 8.) * 60);   </div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>    else drive_time = input(scan(drive_duration, 1), 8.) * 86400; </div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>  end;</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>  </div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>  else if find(upcase(drive_duration), &#39;HR&#39;) then do;</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>    if find(upcase(drive_duration), &#39;MIN&#39;) then</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>      drive_time = (input(scan(drive_duration, 1), 8.) * 3600) + </div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>             (input(scan(drive_duration, 3), 8.) * 60);</div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>    else drive_time = input(scan(drive_duration, 1), 8.) * 3600;             </div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>  end;</div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>  </div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>  else if find(upcase(drive_duration), &#39;MIN&#39;) then do;</div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>    drive_time = input(scan(drive_duration, 1), 8.) * 60;</div>
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>  end;</div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>  </div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>  format drive_miles comma32.2 drive_time time6.;</div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>  label drive_miles = &quot;Driving distance (miles)&quot;</div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>      drive_time = &quot;Driving time (seconds, formated as hh:mm)&quot;</div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>      straight_line_distance_mi = &quot;Geodetic distance (miles)&quot;;</div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>run;</div>
+<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span> </div>
+<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>%*****************************************************************************;</div>
+<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>%* DELETE DBS                                                                 ;</div>
+<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>%*****************************************************************************;</div>
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>%if &amp;debug ne 1 %then %do;</div>
+<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>    proc datasets lib=work nolist;</div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>        delete _zips_ _distance_;</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>    quit;        </div>
+<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>%end;</div>
 <div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span> </div>
-<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>%mend zipDriveDistance;</div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>%*****************************************************************************;</div>
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>%* MEND MACRO                                                                 ;</div>
+<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>%*****************************************************************************;</div>
+<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>ods listing;</div>
+<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>options nomlogic nomlogicnest; </div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span> </div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>%mend zipDriveDistance;</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.5-->
@@ -509,7 +515,7 @@ $(document).ready(function(){initNavTree('zipdrivedistance_8sas_source.html','')
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="zipdrivedistance_8sas.html">zipdrivedistance.sas</a></li>
-    <li class="footer">Generated on Wed Mar 8 2023 15:20:46 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Fri Mar 31 2023 15:18:09 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>
