@@ -40,7 +40,9 @@
  @endcode
  
  @par Revision History
- @b 03-21-2019 Changed how upper/lower case files are searched for in Linux
+ @b 03-31-2023 Change to allow use of backward or forward slashes in directory name
+ @n @b 12-14-2022 Updated to run in PC SAS as well as Linux SAS
+ @n @b 03-21-2019 Changed how upper/lower case files are searched for in Linux
  and added check for when folder has no .XPT files
 **/
 
@@ -97,7 +99,7 @@
 %**************************************************;
 %* Create data set with list of all files to import;
 %**************************************************;
-%* Get list of .CSV files in directory;
+%* Get list of .XPT files in directory;
 %if %substr(&sysscp.,1,3) eq WIN %then %do;
     filename udir  "&directory/*.xpt"; **case insensitive;
 %end;
@@ -127,12 +129,13 @@ proc sql noprint;
 
     %* Get ith file name;
     proc sql noprint;
-        select trim(compress(filename)) into :file
+        select strip(filename) into :file trimmed
         from _files
         where monotonic()=&i.;
 
      data _null_;
-         call symput("fname&i", scan(left(tranwrd("&file.","&directory./"," ")),1,".") );
+        filePath = tranwrd("&file", "\", "/");
+        call symput("fname&i", scan(left(tranwrd("&file.","&directory./"," ")),1,".") );
      run;
 
     %* Import file;
