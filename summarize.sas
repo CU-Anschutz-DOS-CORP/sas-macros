@@ -65,7 +65,7 @@
  and compare using Wilcoxon Rand Sum or Krukal-Wallis tests
  
  @param class The variable which defines the groups
- @n Optional; must be a numeric variable
+ @n Optional; must be a numeric variable and categorical (do not use range formats)
 
  @param subset Optional expression to be used in a WHERE statement to in order 
  to subset the data set.
@@ -155,7 +155,8 @@
  @param list List the variables in the order they should be reported when SORTBY=_LIST
  @n If you do not include all variables, the rest will be included in input order
  @n You can include section headers in the LIST parameter
- @n Each section header must start with TblHdr_ and be ≤ 25 characters in length; 
+ @n Each section header must start with TblHdr_ and be no more than 25 
+ characters in length; 
  use underscore (_) instead of space
 
  @param f1 Format applied to counts (n) in RTFOUT
@@ -299,7 +300,7 @@
     syntax are not supported.
  @li You can include section headers in the LIST parameter. These will
     be included in the label column. Each section header must start
-    with TblHdr_ and be ≤ 25 characters in length.
+    with TblHdr_ and be no more than 25 characters in length.
     Use an underscore (_) instead of a space.
     To insert blank lines use TblHdr__ (2 underscores).
  @li If running on interactive Linux SAS, no output is listed on
@@ -377,7 +378,10 @@
  @endcode
  
  @par Revision History
- @b 07-22-2022 Fixed bug incorporated on previous update that was causing
+ @b 03-17-2023 Updated documentation to exclude special characters causing
+ issues when running session with ENCODING=WLATIN1 
+ @n @b 03-13-2023 Added flow="Tables" option to ODS EXCEL
+ @n @b 07-22-2022 Fixed bug incorporated on previous update that was causing
  Fisher's Exact test p-val to be flagged as Pearson's chi-sq
  @n @b 06-29-2022 Class variable can now have >9 levels or be coded with
  more than 1 digit
@@ -3452,7 +3456,7 @@ ods listing close;
 
 %if %length(&xlsxfile)>0 %then %do;
     ods excel file = &xlsxfile
-        options(sheet_name = &tbltitle
+        options(sheet_name = &tbltitle flow='Tables'
           %if &bdytitle eq 1 %then %do; embedded_titles='yes' embedded_footnotes='yes' %end;
         );
 %end;
