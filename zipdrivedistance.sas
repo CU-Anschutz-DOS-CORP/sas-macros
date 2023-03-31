@@ -286,8 +286,8 @@ run;
                 infile src length = len lrecl = 32767;
                 input line $varying32767. len;
                 line = strip(line);
-                if index(upcase(line), 'MILE') then indx = index(upcase(line), 'MILE');
-                else if index(upcase(line), ' KM') then indx = index(upcase(line), ' KM');    
+                if index(line, 'mile') then indx = index(line, 'mile');
+                else if index(line, ' km') then indx = index(line, ' mi');     
                 retain zip1 &z1  zip2 &z2;
                 if indx then do;
                     lineLen = length(line);  
@@ -333,6 +333,10 @@ run;
 %*****************************************************************************;
 %* ADD DISTANCE TO ORIGINAL DATA (ALLOW CHARACTER TO NUMERIC MERGE)           ;
 %*****************************************************************************;
+proc sort data=_distance_ nodupkey;
+	by zip1 zip2;
+run;
+
 proc sql;
     create table &outdata 
     as select a.*, b.drive_distance, b.drive_distance_units, b.drive_duration
