@@ -100,7 +100,7 @@
  @endcode
  
  @par Revision History
- n/a 
+ @b 05-12-2023 Updated name (version) of conversion table 
 **/
 
 %macro icdmap(
@@ -213,7 +213,7 @@ PRCDESC9 PRCDESC10 LAB9 LAB10 SUFFIX9 SUFFIX10;
 %let map10to9   = &libname..CMS_GEM_&codetype._ICD10_ICD9_2018 ;
 %let desc10     = &libname..CMS_ICD10_&codetype._DESC_2018 ;
 %let desc9      = &libname..CMS_ICD9_&codetype._DESC_2014 ;
-%let conversion = &libname..CMS_ICD10_&codetype._CONVERSION_2021 ;
+%let conversion = &libname..CMS_ICD10_&codetype._CONVERSION_2023 ;
 
 %* Misc set-up for column names and title labels  ;
 %if %upcase(&codetype) eq DX %then %do;     
@@ -350,13 +350,13 @@ PRCDESC9 PRCDESC10 LAB9 LAB10 SUFFIX9 SUFFIX10;
             from &conversion
             where 
               %if %upcase(&codetype) eq DX %then %do ;
-                compress(CURRENT_CODE, ". ") in (&icd10) or compress(OLD_CODE, ". ") in (&icd10) 
+                compress(CURRENT_ICD10_CODE, ". ") in (&icd10) or compress(OLD_ICD10_CODE, ". ") in (&icd10) 
               %end;
               %else %if %upcase(&codetype) eq PRC %then %do ;
                 compress(CURRENT_ICD10_CODE, ". ") in (&icd10) or compress(OLD_ICD10_CODE, ". ") in (&icd10) 
               %end;            
             order by 
-              %if %upcase(&codetype) eq DX %then %do ; CURRENT_CODE, OLD_CODE %end ;    
+              %if %upcase(&codetype) eq DX %then %do ; CURRENT_ICD10_CODE, OLD_ICD10_CODE %end ;    
               %else %if %upcase(&codetype) eq PRC %then %do ; CURRENT_ICD10_CODE, OLD_ICD10_CODE %end ; ;
         quit;
         title3 ;
