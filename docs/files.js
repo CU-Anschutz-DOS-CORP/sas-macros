@@ -3,6 +3,7 @@ var files =
     [ "createtable.sas", "createtable_8sas.html", null ],
     [ "ctable.sas", "ctable_8sas.html", null ],
     [ "dummyvars.sas", "dummyvars_8sas.html", null ],
+    [ "dup.sas", "dup_8sas.html", null ],
     [ "exportdatasettor.sas", "exportdatasettor_8sas.html", null ],
     [ "getnhanesdata.sas", "getnhanesdata_8sas.html", null ],
     [ "icdmap.sas", "icdmap_8sas.html", null ],
