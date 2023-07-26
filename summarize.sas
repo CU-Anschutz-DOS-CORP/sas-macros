@@ -378,7 +378,9 @@
  @endcode
  
  @par Revision History
- @b 03-17-2023 Updated documentation to exclude special characters causing
+ @b 07-26-2023 Fixed coding check for CAT1 vars to correctly identify variables 
+ coded as 0/1/2 to be summarized as CAT2
+ @n @b 03-17-2023 Updated documentation to exclude special characters causing
  issues when running session with ENCODING=WLATIN1 
  @n @b 03-13-2023 Added flow="Tables" option to ODS EXCEL
  @n @b 07-22-2022 Fixed bug incorporated on previous update that was causing
@@ -944,7 +946,7 @@ options minoperator;
         quit;
 
         %*If these are 0/1 or 1/2 then keep in CAT1, else add to CAT2;
-        %if &values in (01 12 0 1 2) %then %let newCAT1 = &newCAT1 &CVAR;
+        %if "&values" in ("01" "12" "0" "1" "2") %then %let newCAT1 = &newCAT1 &CVAR;
         %else %do;
             %put WARNING: %upcase(&cvar) in CAT1 list is not coded 0/1 or 1/2 and has been switched to CAT2 list.;
             %let newCAT2 = &newCAT2 &CVAR;
