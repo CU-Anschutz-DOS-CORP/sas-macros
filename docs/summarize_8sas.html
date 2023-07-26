@@ -335,7 +335,8 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <div class="line">         ,tbltitle=<span class="stringliteral">&quot;Data summaries&quot;</span></div>
 <div class="line">       );</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd><b>03-17-2023</b> Updated documentation to exclude special characters causing issues when running session with ENCODING=WLATIN1 <br  />
+<dl class="section user"><dt>Revision History</dt><dd><b>07-26-2023</b> Fixed coding check for CAT1 vars to correctly identify variables coded as 0/1/2 to be summarized as CAT2 <br  />
+ <b>03-17-2023</b> Updated documentation to exclude special characters causing issues when running session with ENCODING=WLATIN1 <br  />
  <b>03-13-2023</b> Added flow="Tables" option to ODS EXCEL <br  />
  <b>07-22-2022</b> Fixed bug incorporated on previous update that was causing Fisher's Exact test p-val to be flagged as Pearson's chi-sq <br  />
  <b>06-29-2022</b> Class variable can now have &gt;9 levels or be coded with more than 1 digit <br  />
@@ -367,7 +368,7 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="summarize_8sas.html">summarize.sas</a></li>
-    <li class="footer">Generated on Wed May 31 2023 09:26:00 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Wed Jul 26 2023 10:21:18 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>
