@@ -100,7 +100,8 @@
  @endcode
  
  @par Revision History
- @b 05-12-2023 Updated name (version) of conversion table 
+ @b 05-12-2023 Updated name (version) of conversion table
+ @n @b 10-18-2023 Turned off printing of description when only the the conversion is requested 
 **/
 
 %macro icdmap(
@@ -296,7 +297,7 @@ PRCDESC9 PRCDESC10 LAB9 LAB10 SUFFIX9 SUFFIX10;
     %put ************************************************************;
 
     %* List code with description ;
-    %if %upcase(&map) in (0 NO) %then %do ;
+    %if %upcase(&map) in (0 NO) and %upcase(&checkconversion10) in (0 NO) %then %do ;
         title3 "Description of ICD-10-&suffix10 codes" ;
         proc sql;
             select 
@@ -311,7 +312,7 @@ PRCDESC9 PRCDESC10 LAB9 LAB10 SUFFIX9 SUFFIX10;
     %end ;
     
     %* Map 10 to 9 ;
-    %else %do ;    
+    %if %upcase(&map) in (1 YES) %then %do;    
         title3 "ICD-10-&suffix10 to ICD-9-&suffix9 mapping" ;
         proc sql;
             select 
