@@ -4,6 +4,7 @@ var files =
     [ "ctable.sas", "ctable_8sas.html", null ],
     [ "dummyvars.sas", "dummyvars_8sas.html", null ],
     [ "dup.sas", "dup_8sas.html", null ],
+    [ "egfr.sas", "egfr_8sas.html", null ],
     [ "exportdatasettor.sas", "exportdatasettor_8sas.html", null ],
     [ "getnhanesdata.sas", "getnhanesdata_8sas.html", null ],
     [ "icdmap.sas", "icdmap_8sas.html", null ],
@@ -12,6 +13,7 @@ var files =
     [ "imptallxpt.sas", "imptallxpt_8sas.html", null ],
     [ "labelandformat.sas", "labelandformat_8sas.html", null ],
     [ "logcheck.sas", "logcheck_8sas.html", null ],
+    [ "meld.sas", "meld_8sas.html", null ],
     [ "missing.sas", "missing_8sas.html", null ],
     [ "nhanesfmtscrape.sas", "nhanesfmtscrape_8sas.html", null ],
     [ "outsummarize.sas", "outsummarize_8sas.html", null ],
@@ -21,5 +23,6 @@ var files =
     [ "setmissing.sas", "setmissing_8sas.html", null ],
     [ "summarize.sas", "summarize_8sas.html", null ],
     [ "svytable.sas", "svytable_8sas.html", null ],
+    [ "ukdcdrisk.sas", "ukdcdrisk_8sas.html", null ],
     [ "zipdrivedistance.sas", "zipdrivedistance_8sas.html", null ]
 ];
