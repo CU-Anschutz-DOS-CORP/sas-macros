@@ -92,11 +92,12 @@
  @endcode
  
  @par Revision History
- @b 05-15-2019 Updated to also search for distances given in kilometers, 
- these are transformed into miles
- @n @b 03-02-2023 Output dataset now includes drive time in seconds (with time6. format)
- @n @b 03-06-2023 Optimized the way the data is read in and processed
+ @b 12-01-2023 Updated URL call to exclude comma between city and state
  @n @b 03-07-2023 Skipping zip codes not found in sashelp.zipcode (need zip+city for search)
+ @n @b 03-06-2023 Optimized the way the data is read in and processed
+ @n @b 03-02-2023 Output dataset now includes drive time in seconds (with time6. format)
+ @n @b 05-15-2019 Updated to also search for distances given in kilometers, 
+ these are transformed into miles
 **/
 
 %macro zipDriveDistance(
@@ -247,9 +248,9 @@ run;
         %* Some searches do not work unless you include city and date;
         %* Example syntax for query: North+Olmsted,+OH+44070;
         if not missing(zipcity(__zip1)) then 
-            call symputx('zipcity1', tranwrd(catx(' ', zipcity(__zip1), __zip1), " ", "+"));
+            call symputx('zipcity1', tranwrd(catx(' ', compress(zipcity(__zip1), ","), __zip1), " ", "+"));
         if not missing(zipcity(__zip2)) then 
-        call symputx('zipcity2', tranwrd(catx(' ', zipcity(__zip2), __zip2), " ", "+"));
+        call symputx('zipcity2', tranwrd(catx(' ', compress(zipcity(__zip2), ","), __zip2), " ", "+"));
         
         stop;
     run;
