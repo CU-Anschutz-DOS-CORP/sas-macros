@@ -16,7 +16,7 @@
  @par Usage
  A call to this macro has all or some of these parameters:
  @code{.sas}
- %macro egfr(
+ %egfr(
   age = 
  ,female = 
  ,creatinine = 
@@ -89,7 +89,7 @@
  @endcode
  
  @par Revision History
- n/a
+ @b 10-27-2023 Correction in documentation area
 **/
 
 %macro egfr(
