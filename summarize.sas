@@ -242,6 +242,7 @@
 
  @param xmlfile Path and filename for optional XML output file
  @n It should be surrounded in quotes, e.g. "~userid/consult/out.xml"
+ @n Use of xlsxFile instead of xlmFile is strongly recommended
 
  @param bdytitle Location of SAS system titles/footnotes on RTF file
  @n Allowed options are:
@@ -281,6 +282,11 @@
     CLASS variable
  @li CAT2 may contain SAS numeric or character variables, all other
     variable lists should contain SAS numeric variables.
+ @li The use of the following protected words as variable names is prohibited:
+ @n FREQUENCY or PERCENT FOR CAT1, CAT2, or ORD1
+ @n MEAN or STDEV for CON1
+ @n MEDIAN, MIN, MAX for CON2
+ @n MEDIAN, P25, or P75 for CON3
  @li A variable can occur in more than one display parameter list.
     If doing so, it is recommended you use the DESCLABEL=1 option.
  @li Variables which have all missing values will not be analyzed.
@@ -317,6 +323,8 @@
     when the groups are all about the same size.
     Graphical diagnostics can be a useful informal tool for monitoring
     whether your data meet the assumptions of a GLM analysis.
+ @li Suggested output formats are RTF or XLSX. PDF or XML can have more 
+ stylying problems.
  @li OUTPUTWIDTH option does not work with PDF and should not be changed if
     requesting a PDF file. 
  @li Data sets (potentially) created:
@@ -363,8 +371,6 @@
 
  %summarize(data=a
           ,class=group
-          ,rtffile="summary.rtf"
-          ,page=landscape
           ,con1=x1
           ,con2=x2
           ,con3=x3
@@ -374,12 +380,20 @@
           ,sortby=_list
           ,list=x2 x1 x6
           ,tbltitle="Data summaries"
+          ,rtffile="summary.rtf"
+          ,page=landscape
         );
  @endcode
  
  @par Revision History
- @b 07-26-2023 Fixed coding check for CAT1 vars to correctly identify variables 
- coded as 0/1/2 to be summarized as CAT2
+ @b 11-20-2023 1) _TEMPD_ now creates a copy of the class variable instead of renaming it.
+ This will avoid error messages if you include the class variable in one of the CAT lists.
+ 2) Prohibits use of protected words as variable names (FREQUENCY or PERCENT FOR CAT1, CAT2, 
+ or ORD1. MEAN or STDEV for CON1. MEDIAN, MIN, MAX for CON2. MEDIAN, P25, or P75 for CON3). 
+ 3) Bonferroni adjustment will now adjust for the proper number of tests even if you have 
+ >1 groups with 0 cell counts. 4) XLSX output now has frozen headers and column. 
+ @n @b 07-26-2023 Fixed coding check for CAT1 vars to correctly identify variables 
+ coded as 0/1/2 and summarize these as CAT2
  @n @b 03-17-2023 Updated documentation to exclude special characters causing
  issues when running session with ENCODING=WLATIN1 
  @n @b 03-13-2023 Added flow="Tables" option to ODS EXCEL
@@ -959,6 +973,76 @@ options minoperator;
 
 %end; %*end to cat1 checks;
 
+%* Check variable CAT names for protected words;
+%let protectedCatWords = FREQUENCY PERCENT;
+%let nProtectedCatWords = %sysfunc(countw(&protectedCatWords));
+%if %length(&CAT1) %then %do;
+    %do i = 1 %to &nProtectedCatWords;
+        %let protectedCatWord = %scan(&protectedCatWords, &i);
+        %if %sysfunc(findw(%upcase(&CAT1), &protectedCatWord, " ")) %then %do;
+            %let errorflag = 1;
+            %put ERROR: Protected variable name &protectedCatWord in CAT1 list must be changed. Macro will stop executing.;
+        %end;
+    %end;
+%end;
+%if %length(&CAT2) %then %do;
+    %do i = 1 %to &nProtectedCatWords;
+        %let protectedCatWord = %scan(&protectedCatWords, &i);
+        %if %sysfunc(findw(%upcase(&CAT2), &protectedCatWord, " ")) %then %do;
+            %let errorflag = 1;
+            %put ERROR: Protected variable name &protectedCatWord in CAT2 list must be changed. Macro will stop executing.;
+        %end;
+    %end;
+%end;
+%if %length(&ORD1) %then %do;
+    %do i = 1 %to &nProtectedCatWords;
+        %let protectedCatWord = %scan(&protectedCatWords, &i);
+        %if %sysfunc(findw(%upcase(&ORD1), &protectedCatWord, " ")) %then %do;
+            %let errorflag = 1;
+            %put ERROR: Protected variable name &protectedCatWord in ORD1 list must be changed. Macro will stop executing.;
+        %end;
+    %end;
+%end;
+
+%* Check variable CON1 names for protected words;
+%let protectedCon1Words = MEAN STDDEV;
+%let nProtectedCon1Words = %sysfunc(countw(&protectedCon1Words));
+%if %length(&CON1) %then %do;
+    %do i = 1 %to &nProtectedCon1Words;
+        %let protectedCon1Word = %scan(&protectedCon1Words, &i);
+        %if %sysfunc(findw(%upcase(&CON1), &protectedCon1Word, " ")) %then %do;
+            %let errorflag = 1;
+            %put ERROR: Protected variable name &protectedCon1Word in CON1 list must be changed. Macro will stop executing.;
+        %end;
+    %end;
+%end;
+
+%* Check variable CON2 names for protected words;
+%let protectedCon2Words = MEDIAN MIN MAX;
+%let nProtectedCon2Words = %sysfunc(countw(&protectedCon2Words));
+%if %length(&CON2) %then %do;
+    %do i = 1 %to &nProtectedCon2Words;
+        %let protectedCon2Word = %scan(&protectedCon2Words, &i);
+        %if %sysfunc(findw(%upcase(&CON2), &protectedCon2Word, " ")) %then %do;
+            %let errorflag = 1;
+            %put ERROR: Protected variable name &protectedCon2Word in CON2 list must be changed. Macro will stop executing.;
+        %end;
+    %end;
+%end;
+
+%* Check variable CON3 names for protected words;
+%let protectedCon3Words = MEDIAN P25 P75;
+%let nProtectedCon3Words = %sysfunc(countw(&protectedCon3Words));
+%if %length(&CON3) %then %do;
+    %do i = 1 %to &nProtectedCon3Words;
+        %let protectedCon3Word = %scan(&protectedCon3Words, &i);
+        %if %sysfunc(findw(%upcase(&CON3), &protectedCon3Word, " ")) %then %do;
+            %let errorflag = 1;
+            %put ERROR: Protected variable name &protectedCon3Word in CON3 list must be changed. Macro will stop executing.;
+        %end;
+    %end;
+%end;
+
 %* Check that units list for ORS have same length as the variable lists;
 **IF OR=1 AND UNITS GIVEN;
 %macro countlist(vlist= , unitlist= , name=);
@@ -1108,6 +1192,10 @@ run;
 %*****************************************************************************;
 %put ****** SET UP ******;
 %*Create working data set;
+%let dsid=%sysfunc(open(&data));
+%let gFmt=%sysfunc(varformat(&dsid, %sysfunc(varnum(&DSID, &class))));
+%let rc=%sysfunc(close(&DSID));
+
 data _tempd_;
     set &data;
     
@@ -1124,7 +1212,8 @@ data _tempd_;
     %end;      
     %else %do;
         if missing(&class) then delete;
-        rename &class=__class;
+        __class = &class;
+        format __class &gFmt;
     %end;           
 run;
 
@@ -2417,6 +2506,13 @@ title10;
             where pval lt &alpha and PvalFlag eq "F";
         quit;    
     %end;
+    **Temp Db with all variables;
+    proc sql ;
+        create table _temp_&type.ADList as
+        select VarName 
+        from _chisq_&type._
+        where pval lt &alpha ;
+    quit;
     %* If requested and any is signifcant then do post-hoc;
     %if &adhoc eq 1 and (%symexist(ChiSq&type.ADList) or %symexist(Fisher&type.ADList))
         %then %do;
@@ -2458,21 +2554,51 @@ title10;
             %end; %* end to fisher;
         
             %*Combine;
-            data _chisq_adhoc_&type._unadj&j;
-                informat VarName $256. pLab $50.;
+            %if %sysfunc(exist(_csq_adhoc_&type._unadj&j)) or %sysfunc(exist(_fisher_adhoc_&type._unadj&j)) %then %do;
+            data _temp_adhoc_&type._&j;
+                informat VarName $256.;
                 set 
-                  %if %symexist(ChiSq&type.AdList) %then %do; _csq_adhoc_&type._unadj&j %end;
-                  %if %symexist(Fisher&type.AdList) %then %do; _fisher_adhoc_&type._unadj&j(in=inf) %end; ;
+                  %if %symexist(ChiSq&type.AdList) and %sysfunc(exist(_csq_adhoc_&type._unadj&j)) %then %do; 
+                        _csq_adhoc_&type._unadj&j 
+                  %end;
+                  %if %symexist(Fisher&type.AdList) and %sysfunc(exist(_fisher_adhoc_&type._unadj&j)) %then %do; 
+                        _fisher_adhoc_&type._unadj&j(in=inf) 
+                  %end; ;
                 VarName=compress(scan(Table,2,"*"));
                 %if %symexist(Fisher&type.AdList) %then %do;
                     if inf then PvalFlag="F";
                 %end;
-                pLab="p_&&_AdHocLab&j";
                 drop table 
-                  %if %symexist(Fisher&type.AdList) %then %do; name1 %end;
-                  %if %symexist(ChiSq&type.AdList) %then %do; statistic %end; ;
-            run;  
-
+                  %if %symexist(Fisher&type.AdList) and %sysfunc(exist(_csq_adhoc_&type._unadj&j)) %then %do; 
+                        name1 
+                  %end;
+                  %if %symexist(ChiSq&type.AdList) and %sysfunc(exist(_fisher_adhoc_&type._unadj&j)) %then %do; 
+                        statistic 
+                  %end; ;
+            run; 
+            %end;
+            %else %do;
+            data _temp_adhoc_&type._&j;
+                informat VarName $256. raw_p best.;
+            run;
+            %end;
+            **Make sure all vars listed;
+            proc sql;
+                create table _chisq_adhoc_&type._unadj&j as
+                select coalesce(a.varName, b.varName) as varName,
+                "p_&&_AdHocLab&j" as pLab length=50, 
+                case
+                    when not missing(b.raw_p) then b.raw_p
+                    else 1 /* this is to force bonferroni to account for this group when adjusting */
+                    end as raw_p,
+                case
+                    when missing(b.raw_p) then 1
+                    else .
+                    end as flag0
+                from _temp_&type.ADList a
+                left join _temp_adhoc_&type._&j b
+                on upcase(a.varName) = upcase(b.varName);
+            quit;
         %end; %*end to j=1 to numcomb;
 
         %*Raw p-values;
@@ -2486,22 +2612,23 @@ title10;
             
             title9 "ADJUSTING PAIRWISE P-VALUES FOR &type VARS";
             
-            proc sort data=_chisq_mult_&type._; by VarName plab; run;      
+            proc sort data=_chisq_mult_&type._; by VarName plab flag0; run;      
             
             ods output 
                 %if %symexist(padj_method) eq 0 %then %do; pValueInfo=p_info %end;
                 pValues=_chisq_adhoc_&type._(drop=test raw rename=(_id1=pLab));
             proc multtest inpvalues=_chisq_mult_&type._ &adhoc_method;
                 by VarName;
-                id plab;
+                id plab flag0;
             run;  
             ods output close;
             
         %end;
 
         %*Add type;
-        data _chisq_adhoc_&type._;
+        data _chisq_adhoc_&type._(drop=_id2);
             set _chisq_adhoc_&type._;
+            if _id2=1 then delete; **flag0=1;
             type="&type";
         run;
         
@@ -2513,9 +2640,9 @@ title10;
             delete _fish: _csq_&type._ _fisher_&type._
             %if &adhoc eq 1 %then %do j=1 %to &_NumComb; 
               _chisq_adhoc_&type._unadj&j _csq_adhoc_&type._unadj&j 
-              _fisher_adhoc_&type._unadj&j
+              _fisher_adhoc_&type._unadj&j _temp_adhoc_&type._&j
             %end; 
-            _chisq_mult_;
+            _temp_&type.ADList _chisq_mult_;
         run;
         quit;
     %end; 
@@ -3458,8 +3585,13 @@ ods listing close;
 
 %if %length(&xlsxfile)>0 %then %do;
     ods excel file = &xlsxfile
-        options(sheet_name = &tbltitle flow='Tables'
-          %if &bdytitle eq 1 %then %do; embedded_titles='yes' embedded_footnotes='yes' %end;
+        options(sheet_name = &tbltitle 
+                flow='Tables'
+                frozen_headers="2"
+                frozen_rowheaders="1"
+                %if &bdytitle eq 1 %then %do; 
+                    embedded_titles='yes' embedded_footnotes='yes' 
+                %end;
         );
 %end;
 
