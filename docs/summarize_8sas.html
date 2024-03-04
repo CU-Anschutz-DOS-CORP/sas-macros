@@ -246,7 +246,8 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
     <tr><td class="paramname">xlsxfile</td><td>Path and filename for optional XLSX output file <br  />
  It should be surrounded in quotes, e.g. "~userid/consult/out.xlsx"</td></tr>
     <tr><td class="paramname">xmlfile</td><td>Path and filename for optional XML output file <br  />
- It should be surrounded in quotes, e.g. "~userid/consult/out.xml"</td></tr>
+ It should be surrounded in quotes, e.g. "~userid/consult/out.xml" <br  />
+ Use of xlsxFile instead of xlmFile is strongly recommended</td></tr>
     <tr><td class="paramname">bdytitle</td><td>Location of SAS system titles/footnotes on RTF file <br  />
  Allowed options are: <br  />
  0=Put Titles in Header and Footnotes in Footer (DEFAULT) <br  />
@@ -273,6 +274,11 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <li>At least one list of variables (CON1, CON2, CON3, CAT1, CAT2, ORD1) must be provided. </li>
 <li>It is a good idea to have all variables formatted, especially the CLASS variable </li>
 <li>CAT2 may contain SAS numeric or character variables, all other variable lists should contain SAS numeric variables. </li>
+<li>The use of the following protected words as variable names is prohibited: <br  />
+ FREQUENCY or PERCENT FOR CAT1, CAT2, or ORD1 <br  />
+ MEAN or STDEV for CON1 <br  />
+ MEDIAN, MIN, MAX for CON2 <br  />
+ MEDIAN, P25, or P75 for CON3 </li>
 <li>A variable can occur in more than one display parameter list. If doing so, it is recommended you use the DESCLABEL=1 option. </li>
 <li>Variables which have all missing values will not be analyzed. Notification of this occurrence is sent to the SAS log. </li>
 <li>If NTOTALCOL=0, variable labels are flagged if there are missing values and a footnote is added stating # missing for each var. </li>
@@ -285,6 +291,7 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <li>Unless running on SAS Studio, output might not look right in results window but styling in RTF file will be fine <br  />
  </li>
 <li>When comparing 3+ groups, it is recommended that the user make the decision of which type of ANOVA (equal vs. unequal variances) to use. Homogeneity of variance tests have too little power to be relied upon to always detect when Welch’s ANOVA is appropriate. Unless the group variances are extremely different or the number of groups is large, the usual ANOVA test is relatively robust when the groups are all about the same size. Graphical diagnostics can be a useful informal tool for monitoring whether your data meet the assumptions of a GLM analysis. </li>
+<li>Suggested output formats are RTF or XLSX. PDF or XML can have more stylying problems. </li>
 <li>OUTPUTWIDTH option does not work with PDF and should not be changed if requesting a PDF file. </li>
 <li>Data sets (potentially) created: <em>ngroups</em> <em>vtype</em> <em>n</em> <em>order</em> <em>con1</em> <em>tcon1</em> <em>con2</em> <em>tcon2</em> <em>con3</em> <em>tcon3</em> <em>cat1</em> <em>cat2</em> <em>ord1</em> <em>keepcat</em>: p_info <em>ttest</em> <em>ttest2</em> <em>eqvar</em> <em>anova</em>: <em>welch</em>: <em>parp</em>: <em>npar</em>: <em>fish1-_fish3 _csq</em> <em>fisher</em> <em>chisq</em>: <em>outds</em> <em>outcon1</em> <em>outcon2</em> <em>outcon3</em> <em>outcat</em> <em>oddsratios</em> <em>summ</em> <em>pval</em> <em>adhoc_pval</em> <em>adhoc_pval2</em> <em>add</em> <em>tout</em> <em>tempd</em> _f </li>
 <li>Created data sets that are NOT deleted: &amp;OUT &amp;RTFOUT </li>
@@ -322,8 +329,6 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <div class="line"> </div>
 <div class="line">%summarize(data=a</div>
 <div class="line">         ,<span class="keyword">class</span>=group</div>
-<div class="line">         ,rtffile=<span class="stringliteral">&quot;summary.rtf&quot;</span></div>
-<div class="line">         ,page=landscape</div>
 <div class="line">         ,con1=x1</div>
 <div class="line">         ,con2=x2</div>
 <div class="line">         ,con3=x3</div>
@@ -333,9 +338,12 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <div class="line">         ,sortby=_list</div>
 <div class="line">         ,list=x2 x1 x6</div>
 <div class="line">         ,tbltitle=<span class="stringliteral">&quot;Data summaries&quot;</span></div>
+<div class="line">         ,rtffile=<span class="stringliteral">&quot;summary.rtf&quot;</span></div>
+<div class="line">         ,page=landscape</div>
 <div class="line">       );</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd><b>07-26-2023</b> Fixed coding check for CAT1 vars to correctly identify variables coded as 0/1/2 to be summarized as CAT2 <br  />
+<dl class="section user"><dt>Revision History</dt><dd><b>11-20-2023</b> 1) <em>TEMPD</em> now creates a copy of the class variable instead of renaming it. This will avoid error messages if you include the class variable in one of the CAT lists. 2) Prohibits use of protected words as variable names (FREQUENCY or PERCENT FOR CAT1, CAT2, or ORD1. MEAN or STDEV for CON1. MEDIAN, MIN, MAX for CON2. MEDIAN, P25, or P75 for CON3). 3) Bonferroni adjustment will now adjust for the proper number of tests even if you have &gt;1 groups with 0 cell counts. 4) XLSX output now has frozen headers and column. <br  />
+ <b>07-26-2023</b> Fixed coding check for CAT1 vars to correctly identify variables coded as 0/1/2 and summarize these as CAT2 <br  />
  <b>03-17-2023</b> Updated documentation to exclude special characters causing issues when running session with ENCODING=WLATIN1 <br  />
  <b>03-13-2023</b> Added flow="Tables" option to ODS EXCEL <br  />
  <b>07-22-2022</b> Fixed bug incorporated on previous update that was causing Fisher's Exact test p-val to be flagged as Pearson's chi-sq <br  />
@@ -368,7 +376,7 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="summarize_8sas.html">summarize.sas</a></li>
-    <li class="footer">Generated on Tue Oct 24 2023 14:17:36 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Mon Mar 4 2024 10:23:21 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>

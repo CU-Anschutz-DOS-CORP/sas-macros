@@ -152,10 +152,11 @@ $(document).ready(function(){initNavTree('zipdrivedistance_8sas.html',''); initR
 <div class="line"> </div>
 <div class="line">proc print data=zip_info_drive_distance; run;</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd><b>05-15-2019</b> Updated to also search for distances given in kilometers, these are transformed into miles <br  />
- <b>03-02-2023</b> Output dataset now includes drive time in seconds (with time6. format) <br  />
+<dl class="section user"><dt>Revision History</dt><dd><b>12-01-2023</b> Updated URL call to exclude comma between city and state <br  />
+ <b>03-07-2023</b> Skipping zip codes not found in sashelp.zipcode (need zip+city for search) <br  />
  <b>03-06-2023</b> Optimized the way the data is read in and processed <br  />
- <b>03-07-2023</b> Skipping zip codes not found in sashelp.zipcode (need zip+city for search) </dd></dl>
+ <b>03-02-2023</b> Output dataset now includes drive time in seconds (with time6. format) <br  />
+ <b>05-15-2019</b> Updated to also search for distances given in kilometers, these are transformed into miles </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="zipdrivedistance_8sas_source.html">zipdrivedistance.sas</a>.</p>
 </div></div><!-- contents -->
@@ -165,7 +166,7 @@ $(document).ready(function(){initNavTree('zipdrivedistance_8sas.html',''); initR
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="zipdrivedistance_8sas.html">zipdrivedistance.sas</a></li>
-    <li class="footer">Generated on Tue Oct 24 2023 14:17:36 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Mon Mar 4 2024 10:23:21 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>
