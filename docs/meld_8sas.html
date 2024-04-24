@@ -100,6 +100,7 @@ $(document).ready(function(){initNavTree('meld_8sas.html',''); initResizable(); 
 <div class="line">  ,albumin =</div>
 <div class="line">  ,dialysis =</div>
 <div class="line">  ,prefix = </div>
+<div class="line">  ,cap = 1</div>
 <div class="line">);</div>
 </div><!-- fragment --></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>The following columns will be added to the data set being created: meld, meldNa, meld3</dd></dl>
@@ -117,6 +118,10 @@ $(document).ready(function(){initNavTree('meld_8sas.html',''); initResizable(); 
  This must be coded as 1 = yes and 0 = no</td></tr>
     <tr><td class="paramname">prefix</td><td>Optional prefix for meld score variable names <br  />
  For example, if prefix = r_ then the 3 variables created will be r_meld r_meldNa r_meld3</td></tr>
+    <tr><td class="paramname">cap</td><td>Requests that the scores be capped between 6-40 as per OPTN policy <br  />
+ Allowed options are: <br  />
+ 0 = No, calcuate actual score without capping <br  />
+ 1 = Yes, score will be capped betwee 6 and 40 (DEFAULT)</td></tr>
   </table>
   </dd>
 </dl>
@@ -140,6 +145,10 @@ $(document).ready(function(){initNavTree('meld_8sas.html',''); initResizable(); 
 </ul>
 <ul>
 <li>MELD 3.0: Kim WR, Mannalithara A, Heimbach JK, Kamath PS, Asrani SK, Biggins SW, Wood NL, Gentry SE, Kwong AJ. MELD 3.0: The Model for End-Stage Liver Disease Updated for the Modern Era. Gastroenterology. 2021 Dec;161(6):1887-1895.e4. doi: 10.1053/j.gastro.2021.08.050. Epub 2021 Sep 3. PMID: 34481845; PMCID: PMC8608337.</li>
+</ul>
+<ul>
+<li>The lower limit of Serum Sodium (Na) is capped at 125, and the upper limit is capped at 137. </li>
+<li>The upper limit of serum creatinine is capped at 4; in addition, if the patient had dialysis at least twice in the past week, the value for serum creatinine will be automatically adjusted to 4.0</li>
 </ul>
 </dd></dl>
 <dl class="section user"><dt>Example(s)</dt><dd><div class="fragment"><div class="line"> *Using examples on Table 4 of Gastroenterology, 2021-12-01, Volume 161, Issue 6, Pages 1887-1895.e4;</div>
@@ -181,7 +190,7 @@ $(document).ready(function(){initNavTree('meld_8sas.html',''); initResizable(); 
 <div class="line">proc print data=meld; *label;</div>
 <div class="line">run; title;</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd>n/a </dd></dl>
+<dl class="section user"><dt>Revision History</dt><dd><b>03-14-2024</b> Added CAP option to allow control on whether scores are capped between 6 and 40 or not </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="meld_8sas_source.html">meld.sas</a>.</p>
 </div></div><!-- contents -->
@@ -191,7 +200,7 @@ $(document).ready(function(){initNavTree('meld_8sas.html',''); initResizable(); 
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="meld_8sas.html">meld.sas</a></li>
-    <li class="footer">Generated on Mon Mar 4 2024 10:23:21 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Wed Apr 24 2024 14:41:38 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>
