@@ -26,6 +26,7 @@
    ,albumin =
    ,dialysis =
    ,prefix = 
+   ,cap = 1
  );
  @endcode
 
@@ -56,6 +57,11 @@
  @param prefix Optional prefix for meld score variable names
  @n For example, if prefix = r_ then the 3 variables created will be r_meld r_meldNa r_meld3
 
+ @param cap Requests that the scores be capped between 6-40 as per OPTN policy
+ @n Allowed options are:
+ @n 0 = No, calcuate actual score without capping 
+ @n 1 = Yes, score will be capped betwee 6 and 40 (DEFAULT)
+
  @note 
  @parblock
  @li This macro will only run from within a data step.
@@ -77,6 +83,10 @@
  Gentry SE, Kwong AJ. MELD 3.0: The Model for End-Stage Liver Disease Updated for the Modern Era. 
  Gastroenterology. 2021 Dec;161(6):1887-1895.e4. doi: 10.1053/j.gastro.2021.08.050. 
  Epub 2021 Sep 3. PMID: 34481845; PMCID: PMC8608337.
+
+ @li The lower limit of Serum Sodium (Na) is capped at 125, and the upper limit is capped at 137.
+ @li The upper limit of serum creatinine is capped at 4; in addition, if the patient had dialysis at least 
+ twice in the past week, the value for serum creatinine will be automatically adjusted to 4.0
  
  @par Example(s)
  @code{.sas}
@@ -123,7 +133,8 @@
  @endcode
  
  @par Revision History
- n/a
+ @b 03-14-2024 Added CAP option to allow control on whether 
+ scores are capped between 6 and 40 or not
 **/
 
 %macro meld(
@@ -136,6 +147,7 @@
 	,albumin =
 	,dialysis =
 	,prefix = 
+    ,cap = 1
 );
 
     informat biliForMeld inrForMeld scrForMeld scrForMeld3 naForMeld albForMeld 
@@ -153,12 +165,12 @@
 
         /* Calculate MELD */
         &prefix.meld = 
-        	min(round(
+        	round(
         			(0.957 * log(scrForMeld)) +
         			(0.378 * log(biliForMeld)) +
         			(1.120 * log(inrForMeld)) + 
         			0.643
-        		, 0.1) * 10, 40);
+        		, 0.1) * 10;
 		
         /* Calcute MELD-Na */
     	if &prefix.meld gt 11 then &prefix.meldNa =
@@ -179,7 +191,6 @@
 
         /* Calculate MELD 3.0 */
         &prefix.meld3 =
-            min(max(
                 round(
                     (1.33 * &female * (&ageAtListing ge 18)) +
                     (4.56 * log(biliForMeld)) +
@@ -191,9 +202,20 @@
                     (1.83 * (3.5 - albForMeld) * log(scrForMeld3)) -
                     (1.33 * (&ageAtListing ge 18)) +
                     7.33,
-                1), 
-            6), 40);
+                1);
     end; **end of meld3 calc;
+
+    %if &cap = 1 %then %do;
+        if &prefix.meld lt 6 then &prefix.meld = 6;
+        else if &prefix.meld gt 40 then &prefix.meld = 40;
+
+        if &prefix.meldNa lt 6 then &prefix.meldNa = 6;
+        else if &prefix.meldNa gt 40 then &prefix.meldNa = 40;
+
+        if &prefix.meld3 lt 6 then &prefix.meld3 = 6;
+        else if &prefix.meld3 gt 40 then &prefix.meld3 = 40;
+
+    %end;
 
 	drop biliForMeld inrForMeld scrForMeld scrForMeld3 naForMeld albForMeld;
 	
