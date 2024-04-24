@@ -26,7 +26,8 @@
    ,albumin =
    ,dialysis =
    ,prefix = 
-   ,cap = 1
+   ,meldNaAlways = 1
+   ,cap = 0
  );
  @endcode
 
@@ -57,10 +58,15 @@
  @param prefix Optional prefix for meld score variable names
  @n For example, if prefix = r_ then the 3 variables created will be r_meld r_meldNa r_meld3
 
+ @param meldNaAlways Calculates MELDNa regardless of allocation policy 
+ @n Allowed options are:
+ @n 0 = No, only apply MELDNa if MELD is greater than 11
+ @n 1 = Yes, apply MELDNa regarless of original MELD value (DEFAULT)
+
  @param cap Requests that the scores be capped between 6-40 as per OPTN policy
  @n Allowed options are:
- @n 0 = No, calcuate actual score without capping 
- @n 1 = Yes, score will be capped betwee 6 and 40 (DEFAULT)
+ @n 0 = No, calcuate actual score without capping (DEFAULT)
+ @n 1 = Yes, score will be capped betwee 6 and 40 
 
  @note 
  @parblock
@@ -135,6 +141,8 @@
  @par Revision History
  @b 03-14-2024 Added CAP option to allow control on whether 
  scores are capped between 6 and 40 or not
+
+ @b 04-24-2024 Added meldNaAlways option to allow control of when to apply MELDNa
 **/
 
 %macro meld(
@@ -147,7 +155,8 @@
 	,albumin =
 	,dialysis =
 	,prefix = 
-    ,cap = 1
+    ,meldNaAlways = 1
+    ,cap = 0
 );
 
     informat biliForMeld inrForMeld scrForMeld scrForMeld3 naForMeld albForMeld 
@@ -173,13 +182,16 @@
         		, 0.1) * 10;
 		
         /* Calcute MELD-Na */
-    	if &prefix.meld gt 11 then &prefix.meldNa =
+    	%if &meldNaAlways=0 %then %do; if &prefix.meld gt 11 then %end;
+        &prefix.meldNa =
     			round(
     			&prefix.meld +
     			(1.32 * (137 - naForMeld)) -
     			(0.033 * &prefix.meld * (137 - naForMeld))
     			, 1);
-    	else &prefix.meldNa = &prefix.meld;
+    	%if &meldNaAlways=0 %then %do;
+            else &prefix.meldNa = &prefix.meld;
+        %end;
     end; **end of meld, meldna calc;
 
     if nmiss(&ageAtListing, &female, &bilirubin, &sodium, &inr, &creatinine, &albumin) = 0 then do;
