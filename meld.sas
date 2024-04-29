@@ -141,8 +141,7 @@
  @par Revision History
  @b 03-14-2024 Added CAP option to allow control on whether 
  scores are capped between 6 and 40 or not
-
- @b 04-24-2024 Added meldNaAlways option to allow control of when to apply MELDNa
+ @n @b 04-24-2024 Added meldNaAlways option to allow control of when to apply MELDNa
 **/
 
 %macro meld(
