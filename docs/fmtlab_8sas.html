@@ -7,7 +7,7 @@
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="shortcut icon" href="icon.png" type="image/x-icon" />
-<title>SAS Macro Repository: getHcupFormats.sas File Reference</title>
+<title>SAS Macro Repository: fmtlab.sas File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -72,79 +72,56 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('get_hcup_formats_8sas.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('fmtlab_8sas.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">getHcupFormats.sas File Reference</div></div>
+  <div class="headertitle"><div class="title">fmtlab.sas File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Downloads HCUP SAS Format files and creates a format catalog.  
+<p>Label and format a single variable.  
 <a href="#details">More...</a></p>
 
-<p><a href="get_hcup_formats_8sas_source.html">Go to the source code of this file.</a></p>
+<p><a href="fmtlab_8sas_source.html">Go to the source code of this file.</a></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section user"><dt>Purpose</dt><dd>This macro will download all HCUP SAS format text files and will save them as .SAS files. You can also create a SAS format catalog.</dd></dl>
+<div class="textblock"><dl class="section user"><dt>Purpose</dt><dd>This macro runs within a DATA step and will apply specified format and label to a variable.</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Rocio Lopez</dd></dl>
-<dl class="section date"><dt>Date</dt><dd>09-15-2023</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>11-21-2023</dd></dl>
 <dl class="section version"><dt>Version</dt><dd>SAS 9.4 or later</dd></dl>
-<dl class="section user"><dt>Usage</dt><dd>A call to this macro has some or all of these parameters (defaults given): <div class="fragment"><div class="line">%getHcupFormats(</div>
-<div class="line"> saveDir = </div>
-<div class="line"> ,overwrite = 1</div>
-<div class="line"> ,createCatalog = 1</div>
-<div class="line">); </div>
+<dl class="section user"><dt>Usage</dt><dd>A call to this macro has all or some of these parameters: <div class="fragment"><div class="line">%fmtLab(var, fmt, lab);</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>.SAS files with PROC FORMAT code and, if requested, a formats.sas7bcat cataglog.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">saveDir</td><td>Specify the location where the format files are to be saved</td></tr>
-    <tr><td class="paramname">overwrite</td><td>Logical stating whether to overwrite existing files <br  />
- Allowed options are: <br  />
- 0 for no <br  />
- 1 for yes (DEFAULT)</td></tr>
-    <tr><td class="paramname">createCatalog</td><td>Logical stating whether to create a format catalog or not <br  />
- Allowed options are: <br  />
- 0 for no <br  />
- 1 for yes (DEFAULT)</td></tr>
+    <tr><td class="paramname">var</td><td>Variable to which apply format and label</td></tr>
+    <tr><td class="paramname">fmt</td><td>Format to be applied</td></tr>
+    <tr><td class="paramname">label</td><td>Label to be applied</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd><ul>
-<li>This macro has been tested on a Windows environment only. User permissions and working environment might affect the ability to use this macro.</li>
+<li>This macro will only run from within a data step.</li>
 </ul>
-<ul>
-<li>The log file might have the following warning message: Apparent symbolic reference C not resolved. This is because of a format label containing the ampersand sign; please ignore.</li>
-</ul>
-<ul>
-<li>The following files will be downloaded from <a href="https://hcup-us.ahrq.gov/db/tools/:">https://hcup-us.ahrq.gov/db/tools/:</a> DRG_Formats.TXT, HCUP_Formats.TXT, Dx_Pr_Grps_Formats.TXT, I9_Formats.TXT, I10_Formats.TXT, and Severity_Formats.txt</li>
-</ul>
-<ul>
-<li>In order to access the format catalog in future SAS sessions, you can use the following code:</li>
-</ul>
-<div class="fragment"><div class="line">libname fmt <span class="stringliteral">&quot;.\hcup\hcupFormats&quot;</span>;</div>
-<div class="line">options fmtsearch=(work, fmt);</div>
-</div><!-- fragment --><p class="enddd"></p>
 </dd></dl>
-<p ><br  />
-</p>
-<dl class="section user"><dt>Example(s)</dt><dd><div class="fragment"><div class="line">%getHcupFormats(</div>
-<div class="line"> saveDir = .\hcup\hcupFormats</div>
-<div class="line"> ,overwrite = 1</div>
-<div class="line"> ,createCatalog = 1</div>
-<div class="line">); </div>
+<dl class="section user"><dt>Example(s)</dt><dd><div class="fragment"><div class="line">data myData;</div>
+<div class="line"> trtDate = <span class="stringliteral">&quot;21NOV2023&quot;</span>d;</div>
+<div class="line"> %fmtLab(trtDate, mmddyy10., <span class="stringliteral">&quot;Date of treatment&quot;</span>);</div>
+<div class="line">run;</div>
+<div class="line"> </div>
+<div class="line">proc print data=myData label;</div>
+<div class="line">run; title;</div>
 </div><!-- fragment --></dd></dl>
 <dl class="section user"><dt>Revision History</dt><dd>n/a </dd></dl>
 
-<p class="definition">Definition in file <a class="el" href="get_hcup_formats_8sas_source.html">getHcupFormats.sas</a>.</p>
+<p class="definition">Definition in file <a class="el" href="fmtlab_8sas_source.html">fmtlab.sas</a>.</p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.5-->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="get_hcup_formats_8sas.html">getHcupFormats.sas</a></li>
+    <li class="navelem"><a class="el" href="fmtlab_8sas.html">fmtlab.sas</a></li>
     <li class="footer">Generated on Mon Apr 29 2024 15:29:41 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
