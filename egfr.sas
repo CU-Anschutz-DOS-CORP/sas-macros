@@ -90,6 +90,7 @@
  
  @par Revision History
  @b 10-27-2023 Correction in documentation area
+ @n @b 05-02-2024 Bug fix
 **/
 
 %macro egfr(
@@ -114,7 +115,7 @@
         	(max(divide(&creatinine, 0.7), 1)**-1.209) *
         	(0.993**&age) *
         	1.018  ; 
-        if black = 1 then  &prefix.eGFR09 =  &prefix.eGFR09 * 1.159; 
+        if &black = 1 then  &prefix.eGFR09 =  &prefix.eGFR09 * 1.159; 
     end;
 
     /* 2021 Equation */
