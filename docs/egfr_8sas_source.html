@@ -172,50 +172,51 @@ $(document).ready(function(){initNavTree('egfr_8sas_source.html',''); initResiza
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="comment"> </span></div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="comment"> @par Revision History</span></div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="comment"> @b 10-27-2023 Correction in documentation area</span></div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="comment">**/</span></div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>%macro egfr(</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>   age = </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  ,female = </div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  ,creatinine = </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  ,black =</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  ,prefix = </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>);</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="comment">/* 2009 Equation */</span></div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">if</span> nmiss(&amp;age, &amp;female, &amp;creatinine, &amp;black) = 0 </div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        and &amp;age ge 18 and &amp;creatinine gt 0 then <span class="keywordflow">do</span>;</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        <span class="keywordflow">if</span> &amp;female = 0 then &amp;prefix.eGFR09 = </div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>          141 * </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>          ((min(divide(&amp;creatinine, 0.9), 1))**-0.411) *</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>          (max(divide(&amp;creatinine, 0.9), 1)**-1.209) *</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>          (0.993**&amp;age) ;</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> &amp;female = 1 then  &amp;prefix.eGFR09 = </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>          141 * </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>          ((min(divide(&amp;creatinine, 0.7), 1))**-0.329) *</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>          (max(divide(&amp;creatinine, 0.7), 1)**-1.209) *</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>          (0.993**&amp;age) *</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>          1.018  ; </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        <span class="keywordflow">if</span> black = 1 then  &amp;prefix.eGFR09 =  &amp;prefix.eGFR09 * 1.159; </div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    end;</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    <span class="comment">/* 2021 Equation */</span></div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    <span class="keywordflow">if</span> nmiss(&amp;age, &amp;female, &amp;creatinine) = 0 </div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        and &amp;age ge 18 and &amp;creatinine gt 0 then <span class="keywordflow">do</span>;</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        <span class="keywordflow">if</span> &amp;female = 0 then &amp;prefix.eGFR21 = </div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>          142 * </div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>          ((min(divide(&amp;creatinine, 0.9), 1))**-0.302) *</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>          (max(divide(&amp;creatinine, 0.9), 1)**-1.2) *</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>          (0.9938**&amp;age); </div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> &amp;female = 1 then &amp;prefix.eGFR21 = </div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>          142 * </div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>          ((min(divide(&amp;creatinine, 0.7), 1))**-0.241) *</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>          (max(divide(&amp;creatinine, 0.7), 1)**-1.2) *</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>          (0.9938**&amp;age) *</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>          1.012; </div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    end;</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span> </div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>%mend egfr;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="comment"> @n @b 05-02-2024 Bug fix</span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="comment">**/</span></div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>%macro egfr(</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>   age = </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  ,female = </div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  ,creatinine = </div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  ,black =</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  ,prefix = </div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>);</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="comment">/* 2009 Equation */</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordflow">if</span> nmiss(&amp;age, &amp;female, &amp;creatinine, &amp;black) = 0 </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        and &amp;age ge 18 and &amp;creatinine gt 0 then <span class="keywordflow">do</span>;</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        <span class="keywordflow">if</span> &amp;female = 0 then &amp;prefix.eGFR09 = </div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>          141 * </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>          ((min(divide(&amp;creatinine, 0.9), 1))**-0.411) *</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>          (max(divide(&amp;creatinine, 0.9), 1)**-1.209) *</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>          (0.993**&amp;age) ;</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> &amp;female = 1 then  &amp;prefix.eGFR09 = </div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>          141 * </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>          ((min(divide(&amp;creatinine, 0.7), 1))**-0.329) *</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>          (max(divide(&amp;creatinine, 0.7), 1)**-1.209) *</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>          (0.993**&amp;age) *</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>          1.018  ; </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        <span class="keywordflow">if</span> &amp;black = 1 then  &amp;prefix.eGFR09 =  &amp;prefix.eGFR09 * 1.159; </div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    end;</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    <span class="comment">/* 2021 Equation */</span></div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    <span class="keywordflow">if</span> nmiss(&amp;age, &amp;female, &amp;creatinine) = 0 </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        and &amp;age ge 18 and &amp;creatinine gt 0 then <span class="keywordflow">do</span>;</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>        <span class="keywordflow">if</span> &amp;female = 0 then &amp;prefix.eGFR21 = </div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>          142 * </div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>          ((min(divide(&amp;creatinine, 0.9), 1))**-0.302) *</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>          (max(divide(&amp;creatinine, 0.9), 1)**-1.2) *</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>          (0.9938**&amp;age); </div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> &amp;female = 1 then &amp;prefix.eGFR21 = </div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>          142 * </div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>          ((min(divide(&amp;creatinine, 0.7), 1))**-0.241) *</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>          (max(divide(&amp;creatinine, 0.7), 1)**-1.2) *</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>          (0.9938**&amp;age) *</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>          1.012; </div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    end;</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>%mend egfr;</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.5-->
@@ -223,7 +224,7 @@ $(document).ready(function(){initNavTree('egfr_8sas_source.html',''); initResiza
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="egfr_8sas.html">egfr.sas</a></li>
-    <li class="footer">Generated on Mon Apr 29 2024 15:29:41 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Thu May 2 2024 14:09:33 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>
