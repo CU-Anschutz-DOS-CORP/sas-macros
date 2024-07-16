@@ -386,7 +386,8 @@
  @endcode
  
  @par Revision History
- @b 11-20-2023 1) _TEMPD_ now creates a copy of the class variable instead of renaming it.
+ @b 07-16-2024 Fixed but where macro was trying to get a group format when no CLASS var provided 
+ @n @b 11-20-2023 1) _TEMPD_ now creates a copy of the class variable instead of renaming it.
  This will avoid error messages if you include the class variable in one of the CAT lists.
  2) Prohibits use of protected words as variable names (FREQUENCY or PERCENT FOR CAT1, CAT2, 
  or ORD1. MEAN or STDEV for CON1. MEDIAN, MIN, MAX for CON2. MEDIAN, P25, or P75 for CON3). 
@@ -1192,9 +1193,11 @@ run;
 %*****************************************************************************;
 %put ****** SET UP ******;
 %*Create working data set;
-%let dsid=%sysfunc(open(&data));
-%let gFmt=%sysfunc(varformat(&dsid, %sysfunc(varnum(&DSID, &class))));
-%let rc=%sysfunc(close(&DSID));
+%if %length(&class) %then %do;
+    %let dsid=%sysfunc(open(&data));
+    %let gFmt=%sysfunc(varformat(&dsid, %sysfunc(varnum(&DSID, &class))));
+    %let rc=%sysfunc(close(&DSID));
+%end;
 
 data _tempd_;
     set &data;
@@ -3541,7 +3544,7 @@ run;
 %else %if %length(&xlsxfile) gt 0 %then %do; %let file=&xlsxfile; %let minus=5; %end;
 %else %if %length(&xmlfile) gt 0 %then %do; %let file=&xmlfile; %let minus=4; %end;
 
-%if %symexist(file) %then %do;
+%if %symexist(file) and %symexist(minus) %then %do;
     data _null_;
          call symput('filepath', substr(dequote(&file), 1, length(dequote(&file))-&minus));
     run;
