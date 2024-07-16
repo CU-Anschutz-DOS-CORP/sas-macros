@@ -342,7 +342,8 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <div class="line">         ,page=landscape</div>
 <div class="line">       );</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd><b>11-20-2023</b> 1) <em>TEMPD</em> now creates a copy of the class variable instead of renaming it. This will avoid error messages if you include the class variable in one of the CAT lists. 2) Prohibits use of protected words as variable names (FREQUENCY or PERCENT FOR CAT1, CAT2, or ORD1. MEAN or STDEV for CON1. MEDIAN, MIN, MAX for CON2. MEDIAN, P25, or P75 for CON3). 3) Bonferroni adjustment will now adjust for the proper number of tests even if you have &gt;1 groups with 0 cell counts. 4) XLSX output now has frozen headers and column. <br  />
+<dl class="section user"><dt>Revision History</dt><dd><b>07-16-2024</b> Fixed but where macro was trying to get a group format when no CLASS var provided <br  />
+ <b>11-20-2023</b> 1) <em>TEMPD</em> now creates a copy of the class variable instead of renaming it. This will avoid error messages if you include the class variable in one of the CAT lists. 2) Prohibits use of protected words as variable names (FREQUENCY or PERCENT FOR CAT1, CAT2, or ORD1. MEAN or STDEV for CON1. MEDIAN, MIN, MAX for CON2. MEDIAN, P25, or P75 for CON3). 3) Bonferroni adjustment will now adjust for the proper number of tests even if you have &gt;1 groups with 0 cell counts. 4) XLSX output now has frozen headers and column. <br  />
  <b>07-26-2023</b> Fixed coding check for CAT1 vars to correctly identify variables coded as 0/1/2 and summarize these as CAT2 <br  />
  <b>03-17-2023</b> Updated documentation to exclude special characters causing issues when running session with ENCODING=WLATIN1 <br  />
  <b>03-13-2023</b> Added flow="Tables" option to ODS EXCEL <br  />
@@ -376,7 +377,7 @@ $(document).ready(function(){initNavTree('summarize_8sas.html',''); initResizabl
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="summarize_8sas.html">summarize.sas</a></li>
-    <li class="footer">Generated on Thu May 2 2024 14:09:33 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Tue Jul 16 2024 15:22:47 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>
