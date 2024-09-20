@@ -25,7 +25,7 @@
 	,printAll = 0
 	,sortBy = descending _nmiss
 	,reverseCol = 0
-	,out = _miss_
+	,out = _missing_
 	,rtffile = 
 	,page = portrait
 	,xlsxfile = 
@@ -102,10 +102,12 @@
  @endcode
  
  @par Revision History
- @b 01-22-2022 Added highLightVal and printAll options
- @n @b 01-31-2023 1) Corrected labels for _PctMissi columns. 2) Added auto-filter and
+ @b 09-20-2014 Fixed bug that was throwing an error if you tried to save output into 
+ permanent library.
+  @n @b 01-31-2023 1) Corrected labels for _PctMissi columns. 2) Added auto-filter and
  freeze panes to excel output. 3) Aded REVERSECOL option to control order of BYVAR 
  columns.
+ @n @b 01-22-2022 Added highLightVal and printAll options
 **/
 
 %macro missing(
@@ -127,7 +129,7 @@
 %* DELETE DBS FROM WORK LIB                                                   ;
 %*****************************************************************************;
 proc datasets lib=work nodetails nowarn nolist;
-    delete _parsevs_ _tempd_ _ngroups_ _vtype_ _pattern_ &out;
+    delete _parsevs_ _tempd_ _ngroups_ _vtype_ _pattern_ _missing_;
 run; quit;
 
 %*****************************************************************************;
