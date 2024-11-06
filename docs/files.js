@@ -21,6 +21,7 @@ var files =
     [ "missing.sas", "missing_8sas.html", null ],
     [ "nhanesfmtscrape.sas", "nhanesfmtscrape_8sas.html", null ],
     [ "outsummarize.sas", "outsummarize_8sas.html", null ],
+    [ "processSidFiles.sas", "process_sid_files_8sas.html", null ],
     [ "runinfo.sas", "runinfo_8sas.html", null ],
     [ "scheduler.sas", "scheduler_8sas.html", null ],
     [ "sectionheader.sas", "sectionheader_8sas.html", null ],
