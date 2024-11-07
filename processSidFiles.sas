@@ -127,8 +127,8 @@
  @endcode
  
  @par Revision History
- n/a
- 
+ @b 11/07/2024 Some AHAL ZIP files have an EXE file inside so an additional step to
+ execute these has been added
 **/
 
 %macro processSidFiles(
@@ -410,8 +410,17 @@ options nodlcreatedir;
             %end;
             %put NOTE: CMD message "&SYSRC";
 
-            %if (%sysfunc(fileexist("&fileDir/&st._SIDC_&year._AHAL.exe"))
-              or %sysfunc(fileexist("&fileDir/&st._SID_&year._AHAL.asc")))
+            %if %sysfunc(fileexist("&fileDir/&st._SIDC_&year._AHAL.exe")) %then %do;
+                %if &overwrite %then %do;
+                    %sysexec 7z x "&fileDir/&st._SIDC_&year._AHAL.exe" -o"&fileDir" -aoa;
+                %end;
+                %else %do;
+                    %sysexec 7z x "&fileDir/&st._SIDC_&year._AHAL.exe" -o"&fileDir";
+                %end;
+                %put NOTE: CMD message "&SYSRC";
+            %end;
+
+            %if %sysfunc(fileexist("&fileDir/&st._SID_&year._AHAL.asc"))
               %then %let logMessage = &logMessage File unzipped successfuly;
             %else %do;
                 %let logMessage = &logMessage Unable to unzip file;
