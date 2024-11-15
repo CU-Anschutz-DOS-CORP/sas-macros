@@ -91,7 +91,8 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
 <dl class="section date"><dt>Date</dt><dd>07-21-2023</dd></dl>
 <dl class="section version"><dt>Version</dt><dd>SAS 9.4 or later</dd></dl>
 <dl class="section user"><dt>Usage</dt><dd>A call to this macro has all or some of these parameters: <div class="fragment"><div class="line">%kdpi(</div>
-<div class="line">   donType = </div>
+<div class="line">   version = 2024</div>
+<div class="line">  ,donType = </div>
 <div class="line">  ,age =</div>
 <div class="line">  ,hgt_cm =</div>
 <div class="line">  ,wgt_kg =</div>
@@ -110,12 +111,14 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
 <dl class="section return"><dt>Returns</dt><dd>The following columns will be added to the data set being created: kdri_rao, kdri_med, and kdpi</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">version</td><td>Formula version used in calculation <br  />
+ Allowed options are 2024 for current formula (DEFAULT) and 2013 to use the prior formula</td></tr>
     <tr><td class="paramname">donType</td><td>Variable specifying donor type coded as C for cadaveric or L for living</td></tr>
     <tr><td class="paramname">age</td><td>Variable containing donor age</td></tr>
     <tr><td class="paramname">hgt_cm</td><td>Variable containing donor height in centimeters</td></tr>
     <tr><td class="paramname">wgt_kg</td><td>Variable containing donor weight in kilograms</td></tr>
     <tr><td class="paramname">black</td><td>Variable indicating whether the donor is of Black race <br  />
- This must be coded as 1 = black and 0 = other race</td></tr>
+ This is only applicable when using the 2013 formula and must be coded as 1 = black and 0 = other race</td></tr>
     <tr><td class="paramname">htn</td><td>Variable indicating whether donor has history of hypertension <br  />
  This must be coded as 1 = yes and 0 = no</td></tr>
     <tr><td class="paramname">diabetes</td><td>Variable indicating whether donor has history of diabetes <br  />
@@ -124,7 +127,7 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
  This must be coded as 1 = CVA and 0 = other cause of death</td></tr>
     <tr><td class="paramname">creatinine</td><td>Variable containing donor serum creatinine in mg/dL</td></tr>
     <tr><td class="paramname">hcv</td><td>Variable indicating whether the donor is HCV positive <br  />
- This must be coded as 1 = yes and 0 = no</td></tr>
+ This is only applicable when using the 2013 formula and must be coded as 1 = yes and 0 = no</td></tr>
     <tr><td class="paramname">dcd</td><td>Variable indicating the donor DCD status <br  />
  This must be coded as 1 = DCD and 0 = DBD</td></tr>
   </table>
@@ -141,6 +144,11 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd><ul>
+<li>On Oct. 31, 2024, the OPTN implemented a new policy revising the KDPI. The formula was updated by removing race and HCV. The score components for the remaining deceased donor characteristics which make up the KDPI were adjusted to compensate for the removal of those two variables. <br  />
+ <a href="https://optn.transplant.hrsa.gov/news/race-and-hepatitis-c-status-no-longer-included-in-calculation-used-to-estimate-deceased-donor-kidney-function-policy-change-anticipated-to-increase-equity/">https://optn.transplant.hrsa.gov/news/race-and-hepatitis-c-status-no-longer-included-in-calculation-used-to-estimate-deceased-donor-kidney-function-policy-change-anticipated-to-increase-equity/</a> <br  />
+ <a href="https://optn.transplant.hrsa.gov/media/0l3mligh/mac_refit-kdpi_-june-2024_pn.pdf">https://optn.transplant.hrsa.gov/media/0l3mligh/mac_refit-kdpi_-june-2024_pn.pdf</a></li>
+</ul>
+<ul>
 <li>This macro will only run from within a data step.</li>
 </ul>
 <ul>
@@ -166,38 +174,45 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
 </ul>
 <ul>
 <li>Online KDPI calculator: <a href="https://optn.transplant.hrsa.gov/data/allocation-calculators/kdpi-calculator/">https://optn.transplant.hrsa.gov/data/allocation-calculators/kdpi-calculator/</a> <br  />
- Note that the calculator uses the prior year as the reference population (e.g. if you use it in 2023, it uses 2022 as the reference population)</li>
+ Note that the calculator uses the prior year as the reference population (e.g. if you use it in 2024, it uses 2023 as the reference population)</li>
+</ul>
+<ul>
+<li>If you are using the 2024 formula please make sure that you use mapping tables created with OPTN data as of 09/2024. Currently the one available is using the 2023 reference population</li>
+</ul>
+<ul>
+<li>Most recent KDPI Mapping Table: <a href="https://optn.transplant.hrsa.gov/media/wnmnxxzu/kdpi_mapping_table.pdf">https://optn.transplant.hrsa.gov/media/wnmnxxzu/kdpi_mapping_table.pdf</a></li>
 </ul>
 <ul>
 <li>Archive of KDPI Mapping Tables: <a href="https://optn.transplant.hrsa.gov/data/allocation-calculators/archived-allocation-calculator-resources">https://optn.transplant.hrsa.gov/data/allocation-calculators/archived-allocation-calculator-resources</a></li>
 </ul>
 </dd></dl>
-<dl class="section user"><dt>Example(s)</dt><dd><div class="fragment"><div class="line"> *Ref pop used in example: All kidney donors recovered during 2022;</div>
+<dl class="section user"><dt>Example(s)</dt><dd><div class="fragment"><div class="line"> *Ref pop used in example: All kidney donors recovered during 2023;</div>
 <div class="line"> *https:<span class="comment">//optn.transplant.hrsa.gov/media/wnmnxxzu/kdpi_mapping_table.pdf;</span></div>
 <div class="line"> </div>
-<div class="line">*Import 2022 KDPI mapping informat;</div>
-<div class="line">%include <span class="stringliteral">&quot;./optnMappingTables/kdpi_mapping_2022.sas&quot;</span>;</div>
+<div class="line">*Import 2023 KDPI mapping informat;</div>
+<div class="line">%include <span class="stringliteral">&quot;./optnMappingTables/kdpi_mapping_2023.sas&quot;</span>;</div>
 <div class="line"> </div>
 <div class="line"> *Input data and calculate KDPI;</div>
 <div class="line">title <span class="stringliteral">&quot;KDPI&quot;</span>;</div>
 <div class="line">data kdpi;</div>
 <div class="line">   retain d_type <span class="charliteral">&#39;C&#39;</span>;</div>
-<div class="line">   input d_age d_hgt_cm d_wgt_kg d_black d_htn d_diabetes d_codCVA d_scr d_hcv d_dcd;</div>
+<div class="line">   input d_age d_hgt_cm d_wgt_kg d_htn d_diabetes d_codCVA d_scr d_dcd;</div>
 <div class="line"> </div>
 <div class="line">   %kdpi(</div>
-<div class="line">        donTyp        = d_type</div>
+<div class="line">        version       = 2024</div>
+<div class="line">       ,donType       = d_type</div>
 <div class="line">       ,age           = d_age</div>
 <div class="line">       ,hgt_cm        = d_hgt_cm</div>
 <div class="line">       ,wgt_kg        = d_wgt_kg</div>
-<div class="line">       ,black         = d_black</div>
+<div class="line">       ,black         = </div>
 <div class="line">       ,htn           = d_htn</div>
 <div class="line">       ,diabetes      = d_diabetes</div>
 <div class="line">       ,codCVA        = d_codCVA</div>
 <div class="line">       ,creatinine    = d_scr</div>
-<div class="line">       ,hcv           = d_hcv</div>
+<div class="line">       ,hcv           = </div>
 <div class="line">       ,dcd           = d_dcd</div>
-<div class="line">       ,scalingFactor = 1.33586831546044</div>
-<div class="line">       ,kdpiInformat  = inKdpi22F.</div>
+<div class="line">       ,scalingFactor = 1.30900852563932</div>
+<div class="line">       ,kdpiInformat  = inKdpi23F.</div>
 <div class="line">       ,prefix = d_</div>
 <div class="line">   );</div>
 <div class="line">   </div>
@@ -206,14 +221,14 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
 <div class="line">         d_kdpi = <span class="stringliteral">&quot;Donor KDPI (%)&quot;</span>;</div>
 <div class="line"> </div>
 <div class="line">   datalines;</div>
-<div class="line">52 183 81 0 1 0 1 1.7 0 1</div>
+<div class="line">52 183 81 1 0 1 1.7 1</div>
 <div class="line">;</div>
 <div class="line">run;</div>
 <div class="line"> </div>
 <div class="line">proc print data=kdpi; *label;</div>
 <div class="line">run; title;</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd>n/a </dd></dl>
+<dl class="section user"><dt>Revision History</dt><dd><b>11/15/2024</b> Added 2024 formula </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="kdpi_8sas_source.html">kdpi.sas</a>.</p>
 </div></div><!-- contents -->
@@ -223,7 +238,7 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="kdpi_8sas.html">kdpi.sas</a></li>
-    <li class="footer">Generated on Fri Nov 15 2024 14:32:24 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Fri Nov 15 2024 15:48:13 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>
