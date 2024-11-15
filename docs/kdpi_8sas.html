@@ -118,7 +118,7 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
     <tr><td class="paramname">hgt_cm</td><td>Variable containing donor height in centimeters</td></tr>
     <tr><td class="paramname">wgt_kg</td><td>Variable containing donor weight in kilograms</td></tr>
     <tr><td class="paramname">black</td><td>Variable indicating whether the donor is of Black race <br  />
- This is only applicable when using the 2013 formula and must be coded as 1 = black and 0 = other race</td></tr>
+ This variable is only used by the 2013 formula and must be coded as 1 = black and 0 = other race</td></tr>
     <tr><td class="paramname">htn</td><td>Variable indicating whether donor has history of hypertension <br  />
  This must be coded as 1 = yes and 0 = no</td></tr>
     <tr><td class="paramname">diabetes</td><td>Variable indicating whether donor has history of diabetes <br  />
@@ -127,17 +127,12 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
  This must be coded as 1 = CVA and 0 = other cause of death</td></tr>
     <tr><td class="paramname">creatinine</td><td>Variable containing donor serum creatinine in mg/dL</td></tr>
     <tr><td class="paramname">hcv</td><td>Variable indicating whether the donor is HCV positive <br  />
- This is only applicable when using the 2013 formula and must be coded as 1 = yes and 0 = no</td></tr>
+ This variable is only used by the 2013 formula and must be coded as 1 = yes and 0 = no</td></tr>
     <tr><td class="paramname">dcd</td><td>Variable indicating the donor DCD status <br  />
  This must be coded as 1 = DCD and 0 = DBD</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>@scalingFactor A single number representing the scaling factor for converting KDRI RAO to scaled KDRI <br  />
- This is obtained from the KDPI mapping table for the reference population of choice.</p>
-<p >@kdpiInformat The name of the informat that contains the KDPI mapping table for the reference population of choice.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
+    <tr><td class="paramname">scalingFactor</td><td>A single number representing the scaling factor for converting KDRI RAO to scaled KDRI <br  />
+ This is obtained from the KDPI mapping table for the reference population of choice.</td></tr>
+    <tr><td class="paramname">kdpiInformat</td><td>The name of the informat that contains the KDPI mapping table for the reference population of choice.</td></tr>
     <tr><td class="paramname">prefix</td><td>Optional prefix for variable names <br  />
  For example, if prefix = d_ then the 3 variables created will be d_kdpi_rao d_kdpi_med d_kdpi</td></tr>
   </table>
@@ -238,7 +233,7 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="kdpi_8sas.html">kdpi.sas</a></li>
-    <li class="footer">Generated on Fri Nov 15 2024 15:48:13 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Fri Nov 15 2024 15:58:53 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>
