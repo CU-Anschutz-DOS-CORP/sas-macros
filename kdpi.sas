@@ -51,7 +51,7 @@
  @param wgt_kg Variable containing donor weight in kilograms
 
  @param black Variable indicating whether the donor is of Black race
- @n This is only applicable when using the 2013 formula and must be
+ @n This variable is only used by the 2013 formula and must be
  coded as 1 = black and 0 = other race
 
  @param htn Variable indicating whether donor has history of hypertension
@@ -66,18 +66,18 @@
  @param creatinine Variable containing donor serum creatinine in mg/dL
 
  @param hcv Variable indicating whether the donor is HCV positive
- @n This is only applicable when using the 2013 formula and must be
+ @n This variable is only used by the 2013 formula and must be
  coded as 1 = yes and 0 = no
 
  @param dcd Variable indicating the donor DCD status
  @n This must be coded as 1 = DCD and 0 = DBD
 
- @scalingFactor A single number representing the scaling factor for converting KDRI RAO 
+ @param scalingFactor A single number representing the scaling factor for converting KDRI RAO 
  to scaled KDRI
  @n This is obtained from the KDPI mapping table for the reference population 
  of choice.
 
- @kdpiInformat The name of the informat that contains the KDPI mapping table for the
+ @param kdpiInformat The name of the informat that contains the KDPI mapping table for the
  reference population of choice.
  
  @param prefix Optional prefix for variable names
