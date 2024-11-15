@@ -7,7 +7,7 @@
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="shortcut icon" href="icon.png" type="image/x-icon" />
-<title>SAS Macro Repository: processSidFiles.sas File Reference</title>
+<title>SAS Macro Repository: processHcupNationFiles.sas File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -72,73 +72,63 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('process_sid_files_8sas.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('process_hcup_nation_files_8sas.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
 <div class="header">
-  <div class="headertitle"><div class="title">processSidFiles.sas File Reference</div></div>
+  <div class="headertitle"><div class="title">processHcupNationFiles.sas File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Process HCUP SID EXE files to create SAS databases.  
+<p>Process HCUP nationwide ZIP files to create SAS databases.  
 <a href="#details">More...</a></p>
 
-<p><a href="process_sid_files_8sas_source.html">Go to the source code of this file.</a></p>
+<p><a href="process_hcup_nation_files_8sas_source.html">Go to the source code of this file.</a></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section user"><dt>Purpose</dt><dd>This macro processes HCUP SID data files for a specified state and year by executing the corresponding .EXE files. Additionally, it downloads and unzips the corresponding AHAL file, if it exists. Finally, the macro retrieves and runs the associated SAS load files from the HCUP website, saving the resulting .SAS7BDAT files in the specified output directory (OUTDIR).</dd></dl>
+<div class="textblock"><dl class="section user"><dt>Purpose</dt><dd>This macro processes HCUP nationwide data files for a specified registry and year by executing the corresponding .ZIP files. Additionally, the macro retrieves and runs the associated SAS load files from the HCUP website, saving the resulting .SAS7BDAT files in the specified output directory (OUTDIR).</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Rocio Lopez</dd></dl>
-<dl class="section date"><dt>Date</dt><dd>11-04-2024</dd></dl>
-<dl class="section version"><dt>Version</dt><dd>PC SAS 9.4 or later</dd></dl>
-<dl class="section user"><dt>Usage</dt><dd>A call to this macro has some or all of these parameters (defaults given): <div class="fragment"><div class="line">%processSidFiles(</div>
-<div class="line">    sidDir =</div>
+<dl class="section date"><dt>Date</dt><dd>09-22-2023</dd></dl>
+<dl class="section version"><dt>Version</dt><dd>SAS 9.4 or later</dd></dl>
+<dl class="section user"><dt>Usage</dt><dd>A call to this macro has some or all of these parameters (defaults given): <div class="fragment"><div class="line">%processHcupNationFiles(</div>
+<div class="line">    nwDatabase =  </div>
+<div class="line">   ,year = </div>
+<div class="line">   ,password = </div>
+<div class="line">   ,baseDir =</div>
 <div class="line">   ,outDir = </div>
-<div class="line">   ,st = </div>
-<div class="line">   ,year =</div>
-<div class="line">   ,password</div>
 <div class="line">   ,overwrite = 0</div>
+<div class="line">   ,getDataFiles = 1 </div>
 <div class="line">   ,getSasFiles = 1</div>
-<div class="line">   ,getAhalFiles = 1</div>
-<div class="line">   ,getDataFiles = 1</div>
 <div class="line">   ,runSas = 1</div>
-<div class="line">   ,deleteAhalExeFile = 1</div>
-<div class="line">   ,debug = 1</div>
+<div class="line">   ,debug = 0</div>
 <div class="line">);</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>.ASC, .ZIP, .EXE, .SAS, .SAS7BDAT, and/or .LOC files for the specified state/year. The macro will also create a __logOut file that tracks each processed file.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>.CSV, .SAS and .SAS7BDAT files for the specified database/year will be stored in the &lt;OUTDIR&gt;/&lt;NWDATABASE&gt;/&lt;YEAR&gt; folder.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">sidDir</td><td>Specify the base directory where compressed SID materials are saved. Files should be stored under &lt;SIDDIR&gt;/&lt;ST&gt;</td></tr>
-    <tr><td class="paramname">outDir</td><td>Specify the base directory where the extracted and downloaded files will be saved. The macro will create a &lt;OUTDIR&gt;/&lt;ST&gt;/&lt;YEAR&gt; folder under this directory, if it does not already exist. <br  />
- If not provided, then files will be stored under &lt;SIDDIR&gt;/&lt;ST&gt;/&lt;YEAR&gt;</td></tr>
-    <tr><td class="paramname">st</td><td>Two-letter abbreviation for the state of interest</td></tr>
+    <tr><td class="paramname">nwDatabase</td><td>Specify the HCUP nationwide database to process <br  />
+ Allowed options are: NASS, NEDS, NIS, NRD, or KID</td></tr>
     <tr><td class="paramname">year</td><td>Year of data that will be processed (yyyy)</td></tr>
-    <tr><td class="paramname">password</td><td>HCUP-provided case-sensitive password for the state/year SID files</td></tr>
-    <tr><td class="paramname">overwrite</td><td>Logical stating whether to overwrite exising files <br  />
+    <tr><td class="paramname">password</td><td>HCUP-provided case-sensitive password for the files being processed</td></tr>
+    <tr><td class="paramname">baseDir</td><td>Specify the base directory where required materials are saved <br  />
+ Files should be saved under &lt;BASEDIR&gt;/&lt;NWDATABASE/&lt;YEAR&gt;</td></tr>
+    <tr><td class="paramname">outDir</td><td>Specify the base directory where the extracted and downloaded files will be saved. The macro will create a &lt;OUTDIR&gt;/&lt;NWDATABASE&gt;/&lt;YEAR&gt; folder under this directory, if it does not already exist. <br  />
+ If not provided, then files will be stored under &lt;BASEDIR&gt;//&lt;NWDATABASE/&lt;YEAR&gt;</td></tr>
+    <tr><td class="paramname">overwrite</td><td>Logical stating whether to overwrite existing files <br  />
  Allowed options are: <br  />
  0 for no (DEFAULT) <br  />
  1 for yes</td></tr>
-    <tr><td class="paramname">getAhalFiles</td><td>Logical stating whether to download AHAL zip file, if available, and save it in &lt;SIDDIR&gt;/&lt;ST&gt; <br  />
+    <tr><td class="paramname">getDataFiles</td><td>Logical indicating whether to extract and copy the .CSV files from the original ZIP files</td></tr>
+    <tr><td class="paramname">getSasFiles</td><td>Logical stating whether to download all available SAS load programs <br  />
  Allowed options are: <br  />
  0 for no <br  />
  1 for yes (DEFAULT)</td></tr>
-    <tr><td class="paramname">getDataFiles</td><td>Logical stating whether to extract and copy data .ASC files <br  />
+    <tr><td class="paramname">runSas</td><td>Logical stating whether to run SAS load programs and save permanent copies of the data files as .SAS7BDAT <br  />
  Allowed options are: <br  />
  0 for no <br  />
  1 for yes (DEFAULT) <br  />
- User must have purchased and saved the files in &lt;SIDDIR&gt;/&lt;ST&gt; where yyyymmmdd is the date stamp for the date of purchase</td></tr>
-    <tr><td class="paramname">getSasFiles</td><td>Logical stating whether to download SAS load programs for the .ASC extracted from compressed files and save them in &lt;OUTDIR&gt;/&lt;ST&gt;/&lt;YEAR&gt; <br  />
- Allowed options are: <br  />
- 0 for no <br  />
- 1 for yes (DEFAULT)</td></tr>
-    <tr><td class="paramname">runSas</td><td>Logical stating whether to run SAS load programs and save permanent .SAS7BDAT copies in &lt;OUTDIR&gt;/&lt;ST&gt;/&lt;YEAR&gt; <br  />
- Allowed options are: <br  />
- 0 for no <br  />
- 1 for yes (DEFAULT) <br  />
- Note that this will overwrite any existing files in &lt;OUTDIR&gt;/&lt;ST&gt;/&lt;YEAR&gt; regardless of whether you set overwrite to 0</td></tr>
-    <tr><td class="paramname">deleteAhalExeFile</td><td>Logical stating whether to delete the AHAL .EXE file if it exists (in some years the zip has an exe which has the asc file) <br  />
- Allowed options are 0 for no (DEFAULT) and 1 for yes</td></tr>
-    <tr><td class="paramname">debug</td><td>Turns on/off several internal logging options <br  />
+ Note that this will overwrite any existing files in &lt;BASEDIR&gt;/&lt;NWDATABASE&gt;/&lt;YEAR&gt; regardless of whether you set overwrite to 0</td></tr>
+    <tr><td class="paramname">debug</td><td>Turns on/off several internal logging techniques <br  />
  Allowed options are: <br  />
  0 for off (DEFAULT) <br  />
  1 for on</td></tr>
@@ -146,7 +136,7 @@ $(document).ready(function(){initNavTree('process_sid_files_8sas.html',''); init
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd><ul>
-<li>This macro has been tested on a Windows environment only. User permissions and working environment might affect the ability to use this macro.</li>
+<li>This macro has been tested with NRD data on a Windows environment only. User permissions and working environment might affect the ability to use this macro.</li>
 </ul>
 <ul>
 <li>You must have 7-Zip installed in your computer. You can download from <a href="https://www.7-zip.org/">https://www.7-zip.org/</a>. Also, the path to the 7z.exe file must be defined in your PATH environmental variable.</li>
@@ -158,11 +148,11 @@ $(document).ready(function(){initNavTree('process_sid_files_8sas.html',''); init
 <li>Unzipping some files can take time. You will see a Windows EXE window with the progress. Please be patient and allow time to run.</li>
 </ul>
 <ul>
-<li>All extracted files will be stored in &lt;OUTDIR&gt;/&lt;ST&gt;/&lt;YEAR&gt;</li>
+<li>All extracted and downloaded files will be stored in &lt;OUTDIR&gt;/&lt;NWDATABASE&gt;/&lt;YEAR&gt;</li>
 </ul>
 <ul>
-<li>If requesting that the data files be extracted from the .EXE files, the user must have purchased and saved the files in &lt;SIDDIR&gt;/&lt;ST&gt;. Do not rename or unzip file(s). <br  />
- The user should also know the password for files as this will need to be included in the macro call.</li>
+<li>If requesting that the data files be extracted from the .ZIP files, the user must have purchased and saved the files in &lt;BASEDIR&gt;/&lt;NWDATABASE&gt;/&lt;YEAR&gt;. Do not rename or unzip file(s). <br  />
+ The user should also know the password for the files as this will need to be included in the macro call.</li>
 </ul>
 <ul>
 <li>This macro assumes consistency by HCUP in file naming and storage in their website. In instances were they deviate from these, the macro will not work properly.</li>
@@ -170,31 +160,27 @@ $(document).ready(function(){initNavTree('process_sid_files_8sas.html',''); init
 <ul>
 <li>Go to <a href="https://hcup-us.ahrq.gov/">https://hcup-us.ahrq.gov/</a> to purchase data and/or download supporting materials</li>
 </ul>
-<ul>
-<li>At the moment this macro only handles SID data but I might evolve this in the future to processStateFiles to also allow handling of SEDD or SASD files.</li>
-</ul>
 </dd></dl>
 <p ><br  />
 </p>
-<dl class="section user"><dt>Example(s)</dt><dd><div class="fragment"><div class="line">%processSidFiles(</div>
-<div class="line">    sidDir = ./hcup/sid</div>
-<div class="line">   ,outDir = D:/hcup</div>
-<div class="line">   ,st = AR</div>
+<dl class="section user"><dt>Example(s)</dt><dd><div class="fragment"><div class="line">%processHcupNationFiles(</div>
+<div class="line">    nwDatabase = NRD</div>
 <div class="line">   ,year = 2020</div>
 <div class="line">   ,password = xxxxxx</div>
-<div class="line">);</div>
+<div class="line">   ,baseDir = ./hcup</div>
+<div class="line">   ,outDir = D:/hcup</div>
+<div class="line">); </div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd><b>11/15/2024</b> Improved documentation error checking section <br  />
- <b>11/07/2024</b> Some AHAL ZIP files have an EXE file inside so an additional step to execute these has been added </dd></dl>
+<dl class="section user"><dt>Revision History</dt><dd><b>11/14/2024</b> Added functionality to unzip the HCUP-provided ZIP files that contain the data files </dd></dl>
 
-<p class="definition">Definition in file <a class="el" href="process_sid_files_8sas_source.html">processSidFiles.sas</a>.</p>
+<p class="definition">Definition in file <a class="el" href="process_hcup_nation_files_8sas_source.html">processHcupNationFiles.sas</a>.</p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.5-->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="process_sid_files_8sas.html">processSidFiles.sas</a></li>
+    <li class="navelem"><a class="el" href="process_hcup_nation_files_8sas.html">processHcupNationFiles.sas</a></li>
     <li class="footer">Generated on Fri Nov 15 2024 14:32:24 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
