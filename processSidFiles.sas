@@ -1,14 +1,14 @@
 /**
  @file
- @brief Process HCUP SID raw files to create SAS databases
+ @brief Process HCUP SID EXE files to create SAS databases
  
  @details 
  @par Purpose
- This macro will execute the .EXE HCUP SID data files
- for the specified state and year. It will also download and unzip
- the AHAL file if it exits. Lastly, it will download and run the
- associated SAS files from the HCUP website saving .SAS7BDAT files
- in the specified OUTDIR.    
+ This macro processes HCUP SID data files for a specified state and year by executing 
+ the corresponding .EXE files. Additionally, it downloads and unzips the corresponding
+ AHAL file, if it exists. Finally, the macro retrieves and runs the associated SAS load 
+ files from the HCUP website, saving the resulting .SAS7BDAT files in the specified 
+ output directory (OUTDIR).
 
  @author Rocio Lopez
  
@@ -36,14 +36,16 @@
  @endcode
 
  @returns
- .ZIP, .SAS, .EXE, .SAS7BDAT, .ASC and/or .LOC files for the specified state/year.
+ .ASC, .ZIP, .EXE, .SAS, .SAS7BDAT, and/or .LOC files for the specified state/year.
  The macro will also create a __logOut file that tracks each processed file.
  
  @param sidDir Specify the base directory where compressed SID materials are saved.
  Files should be stored under <SIDDIR>/<ST> 
 
- @param outDir Specify the base directory where the output files will be saved. 
- The macro will create a <OUTDIR>/<ST>/<YEAR> folder under this directory.
+ @param outDir Specify the base directory where the extracted and downloaded files will 
+ be saved. The macro will create a <OUTDIR>/<ST>/<YEAR> folder under this directory,
+ if it does not already exist. 
+ @n If not provided, then files will be stored under <SIDDIR>/<ST>/<YEAR>
 
  @param st Two-letter abbreviation for the state of interest
  
@@ -101,14 +103,20 @@
  https://www.7-zip.org/. Also, the path to the 7z.exe file must be defined
  in your PATH environmental variable.
 
- @li This does not run correctly in SAS Enterprise Guide.
+ @li This macro does not run correctly in SAS Enterprise Guide.
+
+ @li Unzipping some files can take time. You will see a Windows EXE window with 
+ the progress. Please be patient and allow time to run.
  
  @li All extracted files will be stored in <OUTDIR>/<ST>/<YEAR>
 
- @li If requesting data files, user must have purchased and saved the files in 
- <SIDDIR>/<ST>. Do not rename or unzip file(s).
- @n  The user should also know the passwords for each file as these will need to 
+ @li If requesting that the data files be extracted from the .EXE files, the user 
+ must have purchased and saved the files in <SIDDIR>/<ST>. Do not rename or unzip file(s).
+ @n  The user should also know the password for files as this will need to 
  be included in the macro call.
+
+ @li This macro assumes consistency by HCUP in file naming and storage in their website.
+ In instances were they deviate from these, the macro will not work properly.
 
  @li Go to https://hcup-us.ahrq.gov/ to purchase data and/or download supporting materials
 
@@ -121,13 +129,16 @@
  @code{.sas}
  %processSidFiles(
      sidDir = ./hcup/sid
+    ,outDir = D:/hcup
     ,st = AR
     ,year = 2020
+    ,password = xxxxxx
  );
  @endcode
  
  @par Revision History
- @b 11/07/2024 Some AHAL ZIP files have an EXE file inside so an additional step to
+ @b 11/15/2024 Improved documentation error checking section 
+ @n @b 11/07/2024 Some AHAL ZIP files have an EXE file inside so an additional step to
  execute these has been added
 **/
 
@@ -157,19 +168,9 @@
 %put *                0.1:SET-UP                                *;
 %put ************************************************************;
 %put ************************************************************;
-
 options noxwait xsync
     %if &debug %then %do ; symbolgen mlogic mprint mlogicnest %end; 
     ;
-
-/* State */
-%let st = %upcase(&st);
-data _null_;
-    call symput('state', compress(stnamel("&st")));
-run;
-
-/* Define file directory */
-%let fileDir = &outDir/&st/&year;
 
 /* Base URL for HCUP tools website (where SAS and AHAL files are) */
 %let hcupToolsUrl = https://hcup-us.ahrq.gov/db/state/sidc/tools;
@@ -214,8 +215,15 @@ added this to your PATH variable. Macro will stop executing.;
 %end;
 
 %if not(%length(&outDir)) %then %do;
-    %put ERROR: Required parameter OUTDIR is not provided. Macro will stop executing.;
-    %let errorFlag = 1;
+    %let outDir = &sidDir;
+    %if %length(&sidDir) and %length(&st) and %length(year) %then %do;
+        %put NOTE: Required parameter OUTDIR is not provided. Files will be stored under &sidDir/&st/&year.;
+    %end;
+    %else %do;
+        %put ERROR: Required parameter OUTDIR is not provided. Macro will stop executing.;
+        %let errorFlag = 1;
+
+    %end;
 %end;
 
 %if not(%length(&st)) %then %do;
@@ -228,7 +236,7 @@ added this to your PATH variable. Macro will stop executing.;
     %let errorFlag = 1;
 %end;
 
-%if not(%length(&password)) %then %do;
+%if &getDataFiles and not(%length(&password)) %then %do;
     %put ERROR: Required parameter PASSWORD is not provided. Macro will stop executing.;
     %let errorFlag = 1;
 %end;
@@ -236,12 +244,17 @@ added this to your PATH variable. Macro will stop executing.;
 %put *************************************************;
 %put * CHECKING DIRECTORIES EXIST                    *;
 %put *************************************************;
-%if not(%length(&sidDir)) and not(%sysfunc(fileexist(&sidDir))) %then %do;
+%if %length(&sidDir) and not(%sysfunc(fileexist(&sidDir))) %then %do;
     %put ERROR: Directory SIDDIR &SIDDIR does not exist. Macro will stop executing.;
     %let errorFlag = 1;
 %end;
 
-%if not(%length(&outDir)) and not(%sysfunc(fileexist(&outDir))) %then %do;
+%if %length(&sidDir) and not(%sysfunc(fileexist(&sidDir/&st))) %then %do;
+    %put ERROR: Directory &SIDDIR/&ST does not exist. Macro will stop executing.;
+    %let errorFlag = 1;
+%end;
+
+%if %length(&outDir) and not(%sysfunc(fileexist(&outDir))) %then %do;
     %put ERROR: Directory OUTDIR &outDir does not exist. Macro will stop executing.;
     %let errorFlag = 1;
 %end;
@@ -249,9 +262,16 @@ added this to your PATH variable. Macro will stop executing.;
 %put *************************************************;
 %put * CHECKING PARAMETER OPTIONS ARE VALID          *;
 %put *************************************************;
-%if not(%length(&state)) %then %do;
-    %put ERROR: &st is not a valid state abbreviation. Macro will stop executing.;
-    %let errorFlag = 1;
+%if %length(&st) %then %do;
+    %let st = %upcase(&st);
+    data _null_;
+        call symput('state', compress(stnamel("&st")));
+    run;
+
+    %if not(%length(&state)) %then %do;
+        %put ERROR: &st is not a valid state abbreviation. Macro will stop executing.;
+        %let errorFlag = 1;
+    %end;
 %end;
 
 %let todayYYYY = %sysfunc(putn("&SYSDATE9."d, year4));
@@ -307,7 +327,14 @@ added this to your PATH variable. Macro will stop executing.;
 
 %put ************************************************************;
 %put ************************************************************;
-%put *                0.3:CREATING LOG FILE                     *;
+%put *                0.3:DEFINING OUTPUT PATH                  *;
+%put ************************************************************;
+%put ************************************************************;
+%let fileDir = &outDir/&st/&year;
+
+%put ************************************************************;
+%put ************************************************************;
+%put *                0.4:CREATING LOG FILE                     *;
 %put ************************************************************;
 %put ************************************************************;
 options varinitchk=nonote;
@@ -319,7 +346,7 @@ options varinitchk=note;
 
 %put ************************************************************;
 %put ************************************************************;
-%put *                1:CREATING DIRECTORY                      *;
+%put *            1:CREATING OUTPUT DIRECTORY                   *;
 %put ************************************************************;
 %put ************************************************************;
 options dlcreatedir; **This will NOT overwrite if the folders exist;
@@ -491,7 +518,7 @@ options nodlcreatedir;
 
         %if %sysfunc(fileexist("&fileDir/&thisAscFile")) 
         and not(&overwrite) %then %do;
-            %put NOTE: &fileDir/&thisFile already exists and will not be overwritted.; 
+            %put NOTE: &fileDir/&thisAscFile already exists and will not be overwritted.; 
             %put **To allow overwriting files, use OVERWRITE=1.;
             %let logMessage = File already executed.;
         %end;
