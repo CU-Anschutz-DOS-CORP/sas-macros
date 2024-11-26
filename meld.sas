@@ -90,10 +90,17 @@
  Gastroenterology. 2021 Dec;161(6):1887-1895.e4. doi: 10.1053/j.gastro.2021.08.050. 
  Epub 2021 Sep 3. PMID: 34481845; PMCID: PMC8608337.
 
+ @li Bilirubin, INR, and creatinine values less than 1.0 are set to 1.0. 
+
  @li The lower limit of Serum Sodium (Na) is capped at 125, and the upper limit is capped at 137.
- @li The upper limit of serum creatinine is capped at 4; in addition, if the patient had dialysis at least 
- twice in the past week, the value for serum creatinine will be automatically adjusted to 4.0
- 
+
+ @li The upper limit of serum creatinine is capped at 4 for MELD or MELD-Na and 3 for MELD 3.0. 
+ In addition, if the patient had dialysis at least twice in the past week, the value for serum 
+ creatinine will be automatically adjusted to 4.0 for MELD or MELD-Na and 3 for MELD 3.0.
+
+ @li For MELD 3.0, albumin values less than 1.5 g/dL are set to 1.5 g/dL, and values greater than 
+ 3.5 g/dL are set to 3.5 g/dL.
+
  @par Example(s)
  @code{.sas}
 
@@ -139,7 +146,8 @@
  @endcode
  
  @par Revision History
- @b 03-14-2024 Added CAP option to allow control on whether 
+ @b 11-26-2024 Improved documentation
+ @n @b 03-14-2024 Added CAP option to allow control on whether 
  scores are capped between 6 and 40 or not
  @n @b 04-24-2024 Added meldNaAlways option to allow control of when to apply MELDNa
 **/
@@ -161,16 +169,24 @@
     informat biliForMeld inrForMeld scrForMeld scrForMeld3 naForMeld albForMeld 
     &prefix.meld &prefix.meldNa &prefix.meld3 best.;
 
-    if nmiss(&bilirubin, &sodium, &inr, &creatinine) = 0 then do;
-    	/* Set bounds as per policy */
-    	biliForMeld = max(&bilirubin, 1);
-    	inrForMELD = max(&inr, 1);
 
+    /* Set bounds as per policy */
+    if not missing(&bilirubin) then biliForMeld = max(&bilirubin, 1);
+    if not missing(&inr) then inrForMELD = max(&inr, 1);
+
+    if not missing(&creatinine) then do;
         if &creatinine > 4 or &dialysis = 1 then scrForMeld = 4;
         else scrForMeld = max(&creatinine, 1);
- 
-        naForMeld = min(max(&sodium, 125), 137);
 
+        if &creatinine > 3 or &dialysis = 1 then scrForMeld3 = 3;
+        else scrForMeld3 = max(&creatinine, 1);
+    end;
+
+    if not missing(&sodium) then naForMeld = min(max(&sodium, 125), 137);
+
+    if not missing(&albumin) then albForMeld = min(max(&albumin, 1.5), 3.5);
+
+    if nmiss(&bilirubin, &sodium, &inr, &creatinine) = 0 then do;
         /* Calculate MELD */
         &prefix.meld = 
         	round(
@@ -194,12 +210,6 @@
     end; **end of meld, meldna calc;
 
     if nmiss(&ageAtListing, &female, &bilirubin, &sodium, &inr, &creatinine, &albumin) = 0 then do;
-        /* Set SCr and albumin bounds as per policy */
-        if &creatinine > 3 or &dialysis = 1 then scrForMeld3 = 3;
-        else scrForMeld3 = max(&creatinine, 1);
-        
-        albForMeld = min(max(&albumin, 1.5), 3.5);
-
         /* Calculate MELD 3.0 */
         &prefix.meld3 =
                 round(
