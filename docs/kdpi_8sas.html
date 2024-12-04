@@ -103,6 +103,8 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
 <div class="line">  ,creatinine =</div>
 <div class="line">  ,hcv =</div>
 <div class="line">  ,dcd =</div>
+<div class="line">  ,htnRefProp = </div>
+<div class="line">  ,dmRefProp = </div>
 <div class="line">  ,scalingFactor =</div>
 <div class="line">  ,kdpiInformat =</div>
 <div class="line">  ,prefix = </div>
@@ -130,6 +132,10 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
  This variable is only used by the 2013 formula and must be coded as 1 = yes and 0 = no</td></tr>
     <tr><td class="paramname">dcd</td><td>Variable indicating the donor DCD status <br  />
  This must be coded as 1 = DCD and 0 = DBD</td></tr>
+    <tr><td class="paramname">htnRefProp</td><td>A single number between 0 and 1 representing the proportion of donors in the reference population having a history of hypertension <br  />
+ This is obtained from the KDPI mapping table for the reference population of choice.</td></tr>
+    <tr><td class="paramname">dmRefProp</td><td>A single number between 0 and 1 representing the proportion of donors in the reference population having a history of diabetes <br  />
+ This is obtained from the KDPI mapping table for the reference population of choice.</td></tr>
     <tr><td class="paramname">scalingFactor</td><td>A single number representing the scaling factor for converting KDRI RAO to scaled KDRI <br  />
  This is obtained from the KDPI mapping table for the reference population of choice.</td></tr>
     <tr><td class="paramname">kdpiInformat</td><td>The name of the informat that contains the KDPI mapping table for the reference population of choice.</td></tr>
@@ -163,6 +169,21 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
 </ul>
 <ul>
 <li>Example interpretation: The estimated risk of kidney graft failure from this donor is higher than &lt;KDPI&gt;% of kidney donors recovered in &lt;reference population year&gt; and &lt;KDPImedian&gt; times that of the median donor recovered in &lt;reference population year&gt;.</li>
+</ul>
+<ul>
+<li>Creatinine values that are outside of the range 0.01 to 40 will be set to missing. Values that are between 10 and 40 may be correct but are questionable, and the user should double check the values before using this macro. Values greater than 8 are capped at 8 for calculating KDRI.</li>
+</ul>
+<ul>
+<li>Donor age is restricted to be between 0 and 99.</li>
+</ul>
+<ul>
+<li>Height is limited to a maximum of 7 feet 11 inches (241.3 cm), and the weight must be between 1 lb (0.454 kg) and 650 lb (294 kg).</li>
+</ul>
+<ul>
+<li>If history of HTN is unknown, the KDRI calculation assumes that the donor has a probability of having been hypertensive equal to the proportion of donors in the reference population having a history of hypertension. The user must get this prevalence value from the KDPI mapping table for the reference population of choice.</li>
+</ul>
+<ul>
+<li>If history of diabetes is unknown, the KDRI calculation assumes that the donor has a probability of having been diabetic equal to the proportion of donors in the reference population having a history of diabetes. The user must get this prevalence value from the KDPI mapping table for the reference population of choice.</li>
 </ul>
 <ul>
 <li>Guide to calculating KDPI: <a href="https://optn.transplant.hrsa.gov/media/j34dm4mv/kdpi_guide.pdf">https://optn.transplant.hrsa.gov/media/j34dm4mv/kdpi_guide.pdf</a></li>
@@ -206,6 +227,8 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
 <div class="line">       ,creatinine    = d_scr</div>
 <div class="line">       ,hcv           = </div>
 <div class="line">       ,dcd           = d_dcd</div>
+<div class="line">       ,htnRefProp    = 0.3812</div>
+<div class="line">       ,dmRefProp     = 0.1491</div>
 <div class="line">       ,scalingFactor = 1.30900852563932</div>
 <div class="line">       ,kdpiInformat  = inKdpi23F.</div>
 <div class="line">       ,prefix = d_</div>
@@ -217,13 +240,15 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
 <div class="line"> </div>
 <div class="line">   datalines;</div>
 <div class="line">52 183 81 1 0 1 1.7 1</div>
+<div class="line">52 183 81 . 0 1 10 1</div>
 <div class="line">;</div>
 <div class="line">run;</div>
 <div class="line"> </div>
 <div class="line">proc print data=kdpi; *label;</div>
 <div class="line">run; title;</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Revision History</dt><dd><b>11/15/2024</b> Added 2024 formula </dd></dl>
+<dl class="section user"><dt>Revision History</dt><dd><b>11-26-2024</b> Incorporated handling of unknown hypertension or diabetes status and extreme values of creatinine, age, height, and weight as per OPTN policy. <br  />
+ <b>11-15-2024</b> Added 2024 formula </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="kdpi_8sas_source.html">kdpi.sas</a>.</p>
 </div></div><!-- contents -->
@@ -233,7 +258,7 @@ $(document).ready(function(){initNavTree('kdpi_8sas.html',''); initResizable(); 
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="kdpi_8sas.html">kdpi.sas</a></li>
-    <li class="footer">Generated on Fri Nov 15 2024 15:58:53 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Wed Dec 4 2024 10:47:13 for SAS Macro Repository by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>
