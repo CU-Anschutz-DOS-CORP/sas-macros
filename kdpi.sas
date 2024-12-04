@@ -132,7 +132,7 @@
 
  @li Donor age is restricted to be between 0 and 99. 
 
- @li Height is limited to a maximum of 7’11” (241.3 cm), and the weight must be between 
+ @li Height is limited to a maximum of 7 feet 11 inches (241.3 cm), and the weight must be between 
  1 lb (0.454 kg) and 650 lb (294 kg).
 
  @li If history of HTN is unknown, the KDRI calculation assumes that the donor has a probability of 
