@@ -119,7 +119,12 @@
  @endcode
  
  @par Revision History
- @b 11/14/2024 Added functionality to unzip the HCUP-provided ZIP files that contain the data files
+ @b 02/07/2025 Added functionality to process NEDS ED and IP files. Also ignoring cost-to-ratio
+ CSV file if found in same directory as there are no SAS load files available for that one. Additionally,
+ included overwrite functionality for creating the SAS7BDAT files. Lastly, corrected URL to KID SAS
+ load programs.
+ @n @b 11/14/2024 Added functionality to unzip the HCUP-provided ZIP files that contain the 
+ data files.
  
 **/
 
@@ -295,8 +300,8 @@ run;
 %put *                0.4: DEFINING HCUP URL                    *;
 %put ************************************************************;
 %put ************************************************************;
-%if %upcase(&nwDatabase) = NIS %then %do;
-    %let hcupToolsUrl = https://hcup-us.ahrq.gov/db/nation/nis/tools/pgms;
+%if %upcase(&nwDatabase) in (NIS KID) %then %do;
+    %let hcupToolsUrl = https://hcup-us.ahrq.gov/db/nation/%lowcase(&nwDatabase)/tools/pgms;
 %end;
 %else %do; 
     %let hcupToolsUrl = https://hcup-us.ahrq.gov/db/nation/%lowcase(&nwDatabase)/pgms;
@@ -382,8 +387,15 @@ options nodlcreatedir;
     %put *             3:GETTING SAS LOAD FILES                     *;
     %put ************************************************************;
     %put ************************************************************;
-    %let sasFiles = Core Hospital DX_PR_GRPS Severity;
-    %do loop = 1 %to 4;
+    %if %upcase(&nwDatabase) = NEDS %then %do;
+        %let sasFiles = Core ED Hospital IP DX_PR_GRPS Severity;
+        %let nGetSasFiles = 6;
+    %end;
+    %else %do;
+        %let sasFiles = Core Hospital DX_PR_GRPS Severity;
+        %let nGetSasFiles = 4;
+    %end;
+    %do loop = 1 %to &nGetSasFiles;
         %let thisSasFile = %scan(&sasFiles, &loop);
 
         %put *************************************************;
@@ -491,7 +503,7 @@ options nodlcreatedir;
         do i = 1 to dnum(did);
             fname = dread(did,i);
             if index(fname, 'SASLoad_') = 1 and findw(upcase(fname), 'SAS') then output __sasFiles;
-            else if findw(upcase(fname), 'CSV') 
+            else if (findw(upcase(fname), 'CSV') and not(index(upcase(fname), "CC&year&nwDatabase")))
                 or findw(upcase(fname), 'ASC') 
                 then output __dataFiles;
         end;
@@ -538,19 +550,28 @@ options nodlcreatedir;
             %if %sysfunc(fileexist("&fileDir/&thisFile..sas"))
                 and &thisCsvFile in (&dataFiles)
                 %then %do;                               
+
+                %if %sysfunc(fileexist("&fileDir/&thisCsvFile..sas7bdat"))
+                      and not(&overwrite) %then %do;
+                        %put NOTE: &fileDir/&thisCsvFile..sas7bdat already exists and will not be overwritten.;
+                        %put **To allow overwriting files, use OVERWRITE=1.;
+                %end;  
                 
-                %include "&fileDir/&thisFile..sas"; 
+                %else %do;
 
-                libname hcupSave "&fileDir";
-                proc copy in=work out=hcupSave memtype=(data);
-                    select &thisCsvFile ;
-                run;        
-                libname hcupSave clear;  
+                    %include "&fileDir/&thisFile..sas"; 
+                    libname hcupSave "&fileDir";
+                    proc copy in=work out=hcupSave memtype=(data);
+                        select &thisCsvFile ;
+                    run;        
+                    libname hcupSave clear;  
 
-                %if not(&debug) %then %do ;
-                proc datasets lib=work memtype=data nodetails nolist nowarn;
-                    delete &thisCsvFile ;
-                run; quit;  
+                    %if not(&debug) %then %do ;
+                    proc datasets lib=work memtype=data nodetails nolist nowarn;
+                        delete &thisCsvFile ;
+                    run; quit; 
+                %end;
+ 
                 %end;
                 
             %end;
