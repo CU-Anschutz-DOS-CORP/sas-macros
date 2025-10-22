@@ -278,7 +278,8 @@
  @endcode
  
  @par Revision History
- @b 08-13-2021 Added option CLTYPE to control method for calculating CL 
+ @b 10-22-2025 Added nomcar and nocollapse options throughout
+ @n @b 08-13-2021 Added option CLTYPE to control method for calculating CL 
  for proportions
  @n @b 05-12-2021 Fixed bug that was causing the N columns to be blank for 
  continuous vars
@@ -1062,7 +1063,7 @@ run;
     
     %put ****** SUMMARIZING CON1 ******;
     
-    proc surveymeans data=_tempd_ mean clm alpha=&alpha;
+    proc surveymeans data=_tempd_ nomcar mean clm alpha=&alpha;
         %if %length(&weight)>0 %then %do; 
           weight &weight; 
         %end;
@@ -1144,7 +1145,7 @@ run;
               weight &weight; 
             %end;
             %if %length(&strata)>0 %then %do; 
-              strata &strata; 
+              strata &strata / nocollapse; 
             %end;
             %if %length(&cluster)>0 %then %do; 
               cluster &cluster; 
@@ -1185,7 +1186,7 @@ run;
 
     %put ****** SUMMARIZING con3 ******;
 
-    proc surveymeans data=_tempd_ median q1 q3 alpha=&alpha;
+    proc surveymeans data=_tempd_ median q1 q3 nomcar alpha=&alpha;
         %if %length(&weight)>0 %then %do; 
           weight &weight; 
         %end;
@@ -1289,7 +1290,7 @@ run;
               weight &weight; 
             %end;
             %if %length(&strata)>0 %then %do; 
-              strata &strata; 
+              strata &strata / nocollapse; 
             %end;
             %if %length(&cluster)>0 %then %do; 
               cluster &cluster; 
@@ -1335,7 +1336,7 @@ run;
     
     %put ****** SUMMARIZING CAT1 ******;
 
-    proc surveyfreq data=_tempd_;
+    proc surveyfreq data=_tempd_ nomcar;
         %if %length(&weight)>0 %then %do; 
           weight &weight; 
         %end;
@@ -1444,7 +1445,7 @@ run;
     
     %put ****** SUMMARIZING CAT2 ******;
     
-    proc surveyfreq data=_tempd_;
+    proc surveyfreq data=_tempd_ nomcar;
         %if %length(&weight)>0 %then %do; 
           weight &weight; 
         %end;
